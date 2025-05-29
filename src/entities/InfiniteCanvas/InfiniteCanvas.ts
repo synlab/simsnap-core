@@ -33,12 +33,14 @@ export class InfiniteCanvas extends VirtualRoom {
 	/*== handler ==*/
 
 	override handleUserPress(event: UserInteractionPointerEventOnCanvas) {
+		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
 		const canvaPos = event.posCanvas;
 		canvaPos && this.sceneObjects.filter(el => ViewBox.intersect(canvaPos, el)).forEach(el => el.pressedBy.push(event.user));
 		super.handleUserPress(event);
 	}
 
 	override handleUserMove(event: UserInteractionPointerEventOnCanvas) {
+		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
 		if (event.user.currentPress) {
 			this.sceneObjects.filter(obj => obj.pressedBy.includes(event.user)).forEach(obj => obj.onGrab?.(event));
 		}
@@ -46,6 +48,7 @@ export class InfiniteCanvas extends VirtualRoom {
 	}
 
 	override handleUserRelease(event: UserInteractionPointerEventOnCanvas) {
+		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
 		if (event.user.currentPress) {
 			if (event.posCanvas && event.user.currentPress.posCanvas && distance(event.posCanvas, event.user.currentPress.posCanvas) < 10) {
 				this.sceneObjects.filter(el => el.pressedBy.includes(event.user)).forEach(el => el?.onClick?.(event))

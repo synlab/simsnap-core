@@ -14,7 +14,7 @@ SimSnap Core is the core library for the SimSnap project. This repository contai
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/simsnap-core.git
+    git clone https://github.com/synlab/simsnap-core-1.git
     ```
 
 2. **Install dependencies:**

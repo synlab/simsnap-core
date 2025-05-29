@@ -2,6 +2,10 @@ import { UserInteractionPointerEvent } from "../VirtualRoom/types";
 import CanvasUser from "./CanvasUser";
 
 export class UserInteractionPointerEventOnCanvas implements UserInteractionPointerEvent {
+    static FromEvent(event: UserInteractionPointerEventOnCanvas){
+        return new UserInteractionPointerEventOnCanvas(event.user, event.x, event.y)
+    }
+
     constructor(
         public readonly user: CanvasUser,
         public readonly x: number,
