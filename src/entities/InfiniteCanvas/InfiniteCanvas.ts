@@ -1,62 +1,62 @@
 import { distance, removeItem } from "../Utils";
 import { VirtualRoom } from "../VirtualRoom/VirtualRoom";
-import CanvasUser from "./CanvasUser";
+import CanvasDevice from "./CanvasDevice";
 import { ViewBox } from "./ViewBoxEntity";
 import { ViewBoxObject } from "./ViewBoxObject";
-import { UserInteractionPointerEventOnCanvas } from "./types";
+import { DeviceInteractionPointerEventOnCanvas } from "./types";
 
 export class InfiniteCanvas extends VirtualRoom {
 
 	constructor(
-		override users: CanvasUser[] = [],
+		override devices: CanvasDevice[] = [],
 		public sceneObjects: ViewBoxObject[] = []
 	) { 
-		super(users)
+		super(devices)
 	}
 
 	/** @internal **/
-	getViewPortScene(user: CanvasUser): ViewBoxObject[] {
+	getViewPortScene(device: CanvasDevice): ViewBoxObject[] {
 		this.handleSceneUpdate?.();
-		const usrPos = user.pos;
-		if (!usrPos || !user.size) {
+		const devicePos = device.pos;
+		if (!devicePos || !device.size) {
 			return [];
 		}
 		return this.sceneObjects
-			.filter(obj => ViewBox.intersectViewBox(obj, user))
+			.filter(obj => ViewBox.intersectViewBox(obj, device))
 			.map(obj => {
 				const newObj = obj.copy();
-				newObj.pos && (newObj.pos = { x: newObj.pos.x - usrPos.x, y: newObj.pos.y - usrPos.y });
+				newObj.pos && (newObj.pos = { x: newObj.pos.x - devicePos.x, y: newObj.pos.y - devicePos.y });
 				return newObj;
 			});
 	}
 
 	/*== handler ==*/
 
-	override handleUserPress(event: UserInteractionPointerEventOnCanvas) {
-		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
+	override handleDevicePress(event: DeviceInteractionPointerEventOnCanvas) {
+		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
 		const canvaPos = event.posCanvas;
-		canvaPos && this.sceneObjects.filter(el => ViewBox.intersect(canvaPos, el)).forEach(el => el.pressedBy.push(event.user));
-		super.handleUserPress(event);
+		canvaPos && this.sceneObjects.filter(el => ViewBox.intersect(canvaPos, el)).forEach(el => el.pressedBy.push(event.device));
+		super.handleDevicePress(event);
 	}
 
-	override handleUserMove(event: UserInteractionPointerEventOnCanvas) {
-		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
-		if (event.user.currentPress) {
-			this.sceneObjects.filter(obj => obj.pressedBy.includes(event.user)).forEach(obj => obj.onGrab?.(event));
+	override handleDeviceMove(event: DeviceInteractionPointerEventOnCanvas) {
+		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
+		if (event.device.currentPress) {
+			this.sceneObjects.filter(obj => obj.pressedBy.includes(event.device)).forEach(obj => obj.onGrab?.(event));
 		}
-		super.handleUserMove(event);
+		super.handleDeviceMove(event);
 	}
 
-	override handleUserRelease(event: UserInteractionPointerEventOnCanvas) {
-		event = UserInteractionPointerEventOnCanvas.FromEvent(event);
-		if (event.user.currentPress) {
-			if (event.posCanvas && event.user.currentPress.posCanvas && distance(event.posCanvas, event.user.currentPress.posCanvas) < 10) {
-				this.sceneObjects.filter(el => el.pressedBy.includes(event.user)).forEach(el => el?.onClick?.(event))
+	override handleDeviceRelease(event: DeviceInteractionPointerEventOnCanvas) {
+		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
+		if (event.device.currentPress) {
+			if (event.posCanvas && event.device.currentPress.posCanvas && distance(event.posCanvas, event.device.currentPress.posCanvas) < 10) {
+				this.sceneObjects.filter(el => el.pressedBy.includes(event.device)).forEach(el => el?.onClick?.(event))
 			}
 
-            this.sceneObjects.forEach(el => removeItem(el.pressedBy, event.user));
+            this.sceneObjects.forEach(el => removeItem(el.pressedBy, event.device));
 		}
-		super.handleUserRelease(event);
+		super.handleDeviceRelease(event);
 	}
 
     handleSceneUpdate?: () => void

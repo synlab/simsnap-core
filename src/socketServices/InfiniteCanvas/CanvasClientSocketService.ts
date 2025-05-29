@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import ClientSocketService from "../VirtualRoom/ClientSocketService";
 import { InfiniteCanvas } from "../../entities/InfiniteCanvas/InfiniteCanvas";
-import CanvasUser from "../../entities/InfiniteCanvas/CanvasUser";
+import CanvasDevice from "../../entities/InfiniteCanvas/CanvasDevice";
 
 export class CanvasClientSocketService extends ClientSocketService {
     private timeInterval: NodeJS.Timeout | undefined;
@@ -9,13 +9,13 @@ export class CanvasClientSocketService extends ClientSocketService {
     constructor(
         clientSocket: Socket,
         override readonly virtualRoom: InfiniteCanvas,
-        override readonly user: CanvasUser = new CanvasUser())
+        override readonly device: CanvasDevice = new CanvasDevice())
     {
-        super(clientSocket, virtualRoom, user);
+        super(clientSocket, virtualRoom, device);
 
         this.timeInterval = setInterval(() => {
-            if (this.user) {
-                const viewPortScene = this.virtualRoom.getViewPortScene(this.user);
+            if (this.device) {
+                const viewPortScene = this.virtualRoom.getViewPortScene(this.device);
                 this.clientSocket.emit('viewPortScene', viewPortScene);
             }
         }, 50)

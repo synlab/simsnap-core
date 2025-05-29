@@ -1,11 +1,11 @@
-import { UserInteractionPointerEvent } from "../VirtualRoom/types";
-import CanvasUser from "./CanvasUser";
+import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
+import CanvasDevice from "./CanvasDevice";
 import { ViewBoxEntity } from "./ViewBoxEntity";
 
 export class ViewBoxObject implements ViewBoxEntity {
     private static CountId = 0;
     readonly id: string;
-    pressedBy: CanvasUser[] = [];
+    pressedBy: CanvasDevice[] = [];
 
     constructor(
         public pos?: {x: number, y: number},
@@ -23,8 +23,8 @@ export class ViewBoxObject implements ViewBoxEntity {
 
     /*== event listenner ==*/
 
-    onClick?: (event: UserInteractionPointerEvent)=>void;
-    onGrab?: (event: UserInteractionPointerEvent)=>void;
+    onClick?: (event: DeviceInteractionPointerEvent)=>void;
+    onGrab?: (event: DeviceInteractionPointerEvent)=>void;
 
     /*== =============== ==*/
 }

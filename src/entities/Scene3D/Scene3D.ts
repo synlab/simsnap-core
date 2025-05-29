@@ -1,14 +1,14 @@
-import User from "../VirtualRoom/User";
+import Device from "../VirtualRoom/Device";
 import { VirtualRoom } from "../VirtualRoom/VirtualRoom";
 import Object3D from "./Object3D";
 
 export class Scene3D extends VirtualRoom {
 
 	constructor(
-		users: User[] = [],
+		devices: Device[] = [],
 		public sceneObjects: Object3D[] = []
 	) { 
-		super(users)
+		super(devices)
 	}
 
 	/** @internal **/

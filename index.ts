@@ -1,7 +1,7 @@
 /*== VirtualRoom ==*/
 
 export { VirtualRoom } from './src/entities/VirtualRoom/VirtualRoom'
-export { User } from './src/entities/VirtualRoom/User'
+export { Device } from './src/entities/VirtualRoom/Device'
 export * from './src/entities/VirtualRoom/types'
 
 export { ClientSocketService } from './src/socketServices/VirtualRoom/ClientSocketService'
@@ -11,7 +11,7 @@ export { ServerSocketService } from './src/socketServices/VirtualRoom/ServerSock
 /*== InfiniteCanvas ==*/
 
 export { InfiniteCanvas } from './src/entities/InfiniteCanvas/InfiniteCanvas'
-export { CanvasUser } from './src/entities/InfiniteCanvas/CanvasUser'
+export { CanvasDevice } from './src/entities/InfiniteCanvas/CanvasDevice'
 export { ViewBoxObject } from './src/entities/InfiniteCanvas/ViewBoxObject'
 export * from './src/entities/InfiniteCanvas/ViewBoxEntity'
 export * from './src/entities/InfiniteCanvas/types'

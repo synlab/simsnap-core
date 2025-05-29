@@ -1,23 +1,23 @@
-import { UserInteractionPointerEvent } from "../VirtualRoom/types";
-import CanvasUser from "./CanvasUser";
+import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
+import CanvasDevice from "./CanvasDevice";
 
-export class UserInteractionPointerEventOnCanvas implements UserInteractionPointerEvent {
-    static FromEvent(event: UserInteractionPointerEventOnCanvas){
-        return new UserInteractionPointerEventOnCanvas(event.user, event.x, event.y)
+export class DeviceInteractionPointerEventOnCanvas implements DeviceInteractionPointerEvent {
+    static FromEvent(event: DeviceInteractionPointerEventOnCanvas){
+        return new DeviceInteractionPointerEventOnCanvas(event.device, event.x, event.y)
     }
 
     constructor(
-        public readonly user: CanvasUser,
+        public readonly device: CanvasDevice,
         public readonly x: number,
         public readonly y: number,
     ) { }
 
     get canvaX() {
-        return this.user.pos && this.x + this.user.pos.x;
+        return this.device.pos && this.x + this.device.pos.x;
     }
 
     get canvaY() {
-        return this.user.pos && this.y + this.user.pos.y;
+        return this.device.pos && this.y + this.device.pos.y;
     }
 
     get posCanvas() {

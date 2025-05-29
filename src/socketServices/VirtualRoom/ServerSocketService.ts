@@ -36,20 +36,20 @@ export class ServerSocketService {
 
     /*== handler ==*/
 
-    public static handleUserPress(x: number, y: number) {
-        ServerSocketService.Connection.emit('userPress', { x, y });
+    public static handleDevicePress(x: number, y: number) {
+        ServerSocketService.Connection.emit('devicePress', { x, y });
     }
 
-    public static handleUserMove(x: number, y: number) {
-        ServerSocketService.Connection.emit('userMove', { x, y });
+    public static handleDeviceMove(x: number, y: number) {
+        ServerSocketService.Connection.emit('deviceMove', { x, y });
     }
 
-    public static handleUserRelease(x: number, y: number) {
-        ServerSocketService.Connection.emit('userRelease', { x, y });
+    public static handleDeviceRelease(x: number, y: number) {
+        ServerSocketService.Connection.emit('deviceRelease', { x, y });
     }
 
-    public static handleUserOrientationChange(alpha: number, beta: number, gamma: number) {
-        ServerSocketService.Connection.emit('userOrientationChange', { alpha, beta, gamma });
+    public static handleDeviceOrientationChange(alpha: number, beta: number, gamma: number) {
+        ServerSocketService.Connection.emit('deviceOrientationChange', { alpha, beta, gamma });
     }
 
     /*== ======= ==*/

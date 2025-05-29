@@ -1,16 +1,16 @@
-import User from "./User";
+import Device from "./Device";
 
 export enum Position{ 'center','top','bottom','left','right' }
 
-export interface UserInteractionOrientationEvent {
-    readonly user: User,
+export interface DeviceInteractionOrientationEvent {
+    readonly device: Device,
     readonly alpha: number,
     readonly beta: number,
     readonly gamma: number
 }
 
-export interface UserInteractionPointerEvent {
-    readonly user: User,
+export interface DeviceInteractionPointerEvent {
+    readonly device: Device,
     readonly x: number,
     readonly y: number
 }

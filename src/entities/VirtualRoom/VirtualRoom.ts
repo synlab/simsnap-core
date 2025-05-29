@@ -1,5 +1,5 @@
-import { UserInteractionOrientationEvent, UserInteractionPointerEvent } from "./types";
-import { User } from "../VirtualRoom/User";
+import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent } from "./types";
+import { Device } from "../VirtualRoom/Device";
 import { removeItem } from "../Utils";
 import { SnapManager } from "./SnapManager";
 
@@ -7,62 +7,62 @@ export class VirtualRoom {
     private snapManager = new SnapManager(this);
 
     constructor(
-        public users: User[] = [],
+        public devices: Device[] = [],
     ) { }
 
     /*== handler ==*/
 
-    handleAddUser(user: User) {
-        this.users.push(user);
-        this.onAddUser?.(user);
+    handleAddDevice(device: Device) {
+        this.devices.push(device);
+        this.onAddDevice?.(device);
     }
 
-    handleRemoveUser(user: User) {
-        removeItem(this.users, user);
-        this.users.forEach(usr => usr.snapUsers = usr.snapUsers.filter(el => el[0] !== user));
-        this.onRemoveUser?.(user);
+    handleRemoveDevice(device: Device) {
+        removeItem(this.devices, device);
+        this.devices.forEach(device => device.snapDevices = device.snapDevices.filter(el => el[0] !== device));
+        this.onRemoveDevice?.(device);
     }
 
-    handleUserPress(event: UserInteractionPointerEvent) {
-        event.user.handlePress(event);
-        this.onUserPress?.(event);
+    handleDevicePress(event: DeviceInteractionPointerEvent) {
+        event.device.handlePress(event);
+        this.onDevicePress?.(event);
     }
 
-    handleUserMove(event: UserInteractionPointerEvent) {
-        if (event.user.currentPress) {
-            event.user.handleMove(event);
-            this.onUserMove?.(event);
+    handleDeviceMove(event: DeviceInteractionPointerEvent) {
+        if (event.device.currentPress) {
+            event.device.handleMove(event);
+            this.onDeviceMove?.(event);
         }
     }
 
-    handleUserRelease(event: UserInteractionPointerEvent) {
-        if (event.user.currentPress) {
+    handleDeviceRelease(event: DeviceInteractionPointerEvent) {
+        if (event.device.currentPress) {
             
             /*-- snap --*/
             this.snapManager.manageSnap(event);
             /*-- ---- --*/
             
-            event.user.handleRelease(event);
-            this.onUserRelease?.(event);
+            event.device.handleRelease(event);
+            this.onDeviceRelease?.(event);
         }
     }
 
-    handleUserOrientationChange(event: UserInteractionOrientationEvent) {
-        this.onUserOrientationChange?.(event);
+    handleDeviceOrientationChange(event: DeviceInteractionOrientationEvent) {
+        this.onDeviceOrientationChange?.(event);
     }
 
     /*== ======= ==*/
 
     /*== event listenner ==*/
 
-    onSnapUsers?: (event1: UserInteractionPointerEvent, event2: UserInteractionPointerEvent) => void;
-    onUnSnapUsers?: (event1: UserInteractionPointerEvent, event2: UserInteractionPointerEvent) => void;
-    onAddUser?: (user: User) => void;
-    onRemoveUser?: (user: User) => void;
-    onUserPress?: (event: UserInteractionPointerEvent) => void;
-    onUserMove?: (event: UserInteractionPointerEvent) => void;
-    onUserRelease?: (event: UserInteractionPointerEvent) => void;
-    onUserOrientationChange?: (event: UserInteractionOrientationEvent) => void;
+    onSnapDevices?: (event1: DeviceInteractionPointerEvent, event2: DeviceInteractionPointerEvent) => void;
+    onUnSnapDevices?: (event1: DeviceInteractionPointerEvent, event2: DeviceInteractionPointerEvent) => void;
+    onAddDevice?: (device: Device) => void;
+    onRemoveDevice?: (device: Device) => void;
+    onDevicePress?: (event: DeviceInteractionPointerEvent) => void;
+    onDeviceMove?: (event: DeviceInteractionPointerEvent) => void;
+    onDeviceRelease?: (event: DeviceInteractionPointerEvent) => void;
+    onDeviceOrientationChange?: (event: DeviceInteractionOrientationEvent) => void;
 
     /*== =============== ==*/
 }
