@@ -1,11 +1,11 @@
 import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
-import CanvasDevice from "./CanvasDevice";
+import { CanvasDevice } from "./CanvasDevice";
 import { ViewBoxEntity } from "./ViewBoxEntity";
 
-export class ViewBoxObject implements ViewBoxEntity {
+export class ViewBoxObject<D extends CanvasDevice<D> = CanvasDevice> implements ViewBoxEntity {
     private static CountId = 0;
     readonly id: string;
-    pressedBy: CanvasDevice[] = [];
+    pressedBy: D[] = [];
 
     constructor(
         public pos?: {x: number, y: number},
@@ -16,15 +16,14 @@ export class ViewBoxObject implements ViewBoxEntity {
         this.id = `${preId}-${ViewBoxObject.CountId++}`;
     }
 
-    copy(): ViewBoxObject {
-        const newObject = new ViewBoxObject(this.pos && {...this.pos}, this.size && {...this.size}, this.metaData);
-        return newObject;
+    copy(): this {
+        return structuredClone(this);
     }
 
     /*== event listenner ==*/
 
-    onClick?: (event: DeviceInteractionPointerEvent)=>void;
-    onGrab?: (event: DeviceInteractionPointerEvent)=>void;
+    onClick?: (event: DeviceInteractionPointerEvent<D>)=>void;
+    onGrab?: (event: DeviceInteractionPointerEvent<D>)=>void;
 
     /*== =============== ==*/
 }

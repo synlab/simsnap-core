@@ -1,18 +1,18 @@
-import Device from "../VirtualRoom/Device";
+import { Device } from "../VirtualRoom/Device";
 import { VirtualRoom } from "../VirtualRoom/VirtualRoom";
 import Object3D from "./Object3D";
 
-export class Scene3D extends VirtualRoom {
+export class Scene3D<D extends Device<D> = Device, O extends Object3D = Object3D> extends VirtualRoom<D> {
 
 	constructor(
-		devices: Device[] = [],
-		public sceneObjects: Object3D[] = []
+		devices: D[] = [],
+		public sceneObjects: O[] = []
 	) { 
 		super(devices)
 	}
 
 	/** @internal **/
-	updateSceneObjects(): Object3D[] {
+	updateSceneObjects(): O[] {
 		this.handleSceneUpdate?.();
         return this.sceneObjects
     }

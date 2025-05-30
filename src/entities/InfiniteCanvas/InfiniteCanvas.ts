@@ -1,21 +1,21 @@
 import { distance, removeItem } from "../Utils";
 import { VirtualRoom } from "../VirtualRoom/VirtualRoom";
-import CanvasDevice from "./CanvasDevice";
+import { CanvasDevice } from "./CanvasDevice";
 import { ViewBox } from "./ViewBoxEntity";
 import { ViewBoxObject } from "./ViewBoxObject";
 import { DeviceInteractionPointerEventOnCanvas } from "./types";
 
-export class InfiniteCanvas extends VirtualRoom {
+export class InfiniteCanvas<D extends CanvasDevice<D> = CanvasDevice> extends VirtualRoom<D> {
 
 	constructor(
-		override devices: CanvasDevice[] = [],
-		public sceneObjects: ViewBoxObject[] = []
+		override devices: D[] = [],
+		public sceneObjects: ViewBoxObject<D>[] = []
 	) { 
 		super(devices)
 	}
 
 	/** @internal **/
-	getViewPortScene(device: CanvasDevice): ViewBoxObject[] {
+	getViewPortScene(device: D): ViewBoxObject<D>[] {
 		this.handleSceneUpdate?.();
 		const devicePos = device.pos;
 		if (!devicePos || !device.size) {
@@ -32,23 +32,20 @@ export class InfiniteCanvas extends VirtualRoom {
 
 	/*== handler ==*/
 
-	override handleDevicePress(event: DeviceInteractionPointerEventOnCanvas) {
-		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
+	override handleDevicePress(event: DeviceInteractionPointerEventOnCanvas<D>) {
 		const canvaPos = event.posCanvas;
 		canvaPos && this.sceneObjects.filter(el => ViewBox.intersect(canvaPos, el)).forEach(el => el.pressedBy.push(event.device));
 		super.handleDevicePress(event);
 	}
 
-	override handleDeviceMove(event: DeviceInteractionPointerEventOnCanvas) {
-		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
+	override handleDeviceMove(event: DeviceInteractionPointerEventOnCanvas<D>) {
 		if (event.device.currentPress) {
 			this.sceneObjects.filter(obj => obj.pressedBy.includes(event.device)).forEach(obj => obj.onGrab?.(event));
 		}
 		super.handleDeviceMove(event);
 	}
 
-	override handleDeviceRelease(event: DeviceInteractionPointerEventOnCanvas) {
-		event = DeviceInteractionPointerEventOnCanvas.FromEvent(event);
+	override handleDeviceRelease(event: DeviceInteractionPointerEventOnCanvas<D>) {
 		if (event.device.currentPress) {
 			if (event.posCanvas && event.device.currentPress.posCanvas && distance(event.posCanvas, event.device.currentPress.posCanvas) < 10) {
 				this.sceneObjects.filter(el => el.pressedBy.includes(event.device)).forEach(el => el?.onClick?.(event))
@@ -61,7 +58,7 @@ export class InfiniteCanvas extends VirtualRoom {
 
     handleSceneUpdate?: () => void
 
-	/*== ======= ==*/
+	/*== ======= ==*/	
 }
 
 export default InfiniteCanvas;

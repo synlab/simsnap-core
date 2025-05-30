@@ -1,13 +1,13 @@
 import { Position, DeviceInteractionPointerEvent } from "./types";
 
-export class Device {
+export class Device<D extends Device<D> = DeviceImpl> {
     private static CountId = 0;
     readonly id: string;
 
-    currentPressStart: DeviceInteractionPointerEvent | null = null;
-    currentPress: DeviceInteractionPointerEvent | null = null;
+    currentPressStart: DeviceInteractionPointerEvent<D> | null = null;
+    currentPress: DeviceInteractionPointerEvent<D> | null = null;
 
-    snapDevices: [Device, Position][] = [];
+    snapDevices: [D, Position][] = [];
 
     constructor(
         private _size?: { width: number; height: number; },
@@ -20,29 +20,27 @@ export class Device {
     set size(value: { width: number; height: number; }) { this._size = value };
     get size(): { width: number; height: number; } | undefined { return this._size; }
 
-    /** @internal **/
-    snapTo(device: Device, position: Position) {
+    snapTo(device: D, position: Position) {
         this.snapDevices.push([device, position]);
         this.onSnap?.(device, position);
     }
 
-    /** @internal **/
-    unSnapTo(device: Device, position: Position) {
+    unSnapTo(device: D, position: Position) {
         this.snapDevices = this.snapDevices.filter(el => ! (el[0] === device && el[1] === position));
         this.onUnSnap?.(device, position);
     }
 
     /*== handler ==*/
 
-    handlePress(event: DeviceInteractionPointerEvent){
+    handlePress(event: DeviceInteractionPointerEvent<D>){
         this.currentPressStart = this.currentPress = event;
     }
     
-    handleMove(event: DeviceInteractionPointerEvent) {
+    handleMove(event: DeviceInteractionPointerEvent<D>) {
         if (this.currentPress) this.currentPress = event;
     }
     
-    handleRelease(event: DeviceInteractionPointerEvent){
+    handleRelease(event: DeviceInteractionPointerEvent<D>){
         this.currentPressStart = null;
         this.currentPress = null;
     }
@@ -51,10 +49,11 @@ export class Device {
 
     /*== event listenner ==*/
 
-    onSnap?: (device: Device, position: Position) => void;
-    onUnSnap?: (device: Device, position: Position) => void;
+    onSnap?: (device: D, position: Position) => void;
+    onUnSnap?: (device: D, position: Position) => void;
 
     /*== =============== ==*/
 }
 
+class DeviceImpl extends Device<Device>{};
 export default Device;

@@ -1,11 +1,12 @@
 import { distance } from "../Utils";
+import { Device } from "./Device";
 import { Position, DeviceInteractionPointerEvent } from "./types";
 import { VirtualRoom } from "./VirtualRoom";
 
-export class SnapManager {
-    constructor(private readonly virtualRoom: VirtualRoom) { }
+export class SnapManager<D extends Device<D>> {
+    constructor(private readonly virtualRoom: VirtualRoom<D>) { }
 
-    private composedPress: { start: DeviceInteractionPointerEvent | null, end: DeviceInteractionPointerEvent | null } = { start: null, end: null };
+    private composedPress: { start: DeviceInteractionPointerEvent<D> | null, end: DeviceInteractionPointerEvent<D> | null } = { start: null, end: null };
     
     private pairs: [Position, Position][] = [
         [Position.top, Position.bottom],
@@ -14,7 +15,7 @@ export class SnapManager {
         [Position.right, Position.left],
     ];
 
-    public manageSnap(event: DeviceInteractionPointerEvent) {
+    public manageSnap(event: DeviceInteractionPointerEvent<D>) {
         if (this.composedPress.start && this.composedPress.end && event.device.currentPressStart && distance(this.composedPress.start, this.composedPress.end) > 10 && distance(event.device.currentPressStart, event) > 10) {
             this.checkSnapDevices(this.composedPress.end, event);
             this.checkUnsnapDevices(this.composedPress.start, event.device.currentPressStart);
@@ -29,7 +30,7 @@ export class SnapManager {
         }
     }
     
-    private positionOnViewPort(event: DeviceInteractionPointerEvent): Position[] | null {
+    private positionOnViewPort(event: DeviceInteractionPointerEvent<D>): Position[] | null {
         if (!event.device.size) return null;
         const margin = 0.1;
         const position: Position[] = [];
@@ -44,7 +45,7 @@ export class SnapManager {
 
     
 
-    private checkSnapDevices(eventEnd1: DeviceInteractionPointerEvent, eventEnd2: DeviceInteractionPointerEvent) {
+    private checkSnapDevices(eventEnd1: DeviceInteractionPointerEvent<D>, eventEnd2: DeviceInteractionPointerEvent<D>) {
         const pos1 = this.positionOnViewPort(eventEnd1);
         const pos2 = this.positionOnViewPort(eventEnd2);
         if (pos1 && pos2) this.pairs.forEach(pair => {
@@ -56,7 +57,7 @@ export class SnapManager {
         });
     }
 
-    private checkUnsnapDevices(eventStart1: DeviceInteractionPointerEvent, eventStart2: DeviceInteractionPointerEvent) {
+    private checkUnsnapDevices(eventStart1: DeviceInteractionPointerEvent<D>, eventStart2: DeviceInteractionPointerEvent<D>) {
         const pos1 = this.positionOnViewPort(eventStart1);
         const pos2 = this.positionOnViewPort(eventStart2);
         if (pos1 && pos2) this.pairs.forEach(pair => {
