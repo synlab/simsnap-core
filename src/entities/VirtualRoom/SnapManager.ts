@@ -2,9 +2,16 @@ import { distance } from "../Utils";
 import { Position, DeviceInteractionPointerEvent } from "./types";
 import { VirtualRoom } from "./VirtualRoom";
 
+/**
+ * Handle the snapping management for virtualRoom
+ * @internal
+ *
+ * @param virtualRoom - the calling virtualRoom
+ */
 export class SnapManager {
-    constructor(private readonly virtualRoom: VirtualRoom) { }
+    constructor( private readonly virtualRoom: VirtualRoom ) { }
 
+    /** save the starting and ending event of the first touch if a multiple touch across the device is detected */
     private composedPress: { start: DeviceInteractionPointerEvent | null, end: DeviceInteractionPointerEvent | null } = { start: null, end: null };
     
     private pairs: [Position, Position][] = [
@@ -14,16 +21,27 @@ export class SnapManager {
         [Position.right, Position.left],
     ];
 
+    /**
+     * Call by VirtualRoom for each release event to detect if a snapping is involved
+     *
+     * @param event - the released event
+     */
     public manageSnap(event: DeviceInteractionPointerEvent) {
         if (this.composedPress.start && this.composedPress.end && event.device.currentPressStart && distance(this.composedPress.start, this.composedPress.end) > 10 && distance(event.device.currentPressStart, event) > 10) {
+        // if we already had a touch on the screen, and the distance bewteen start and end for the two touches are big enough
+            
             this.checkSnapDevices(this.composedPress.end, event);
             this.checkUnsnapDevices(this.composedPress.start, event.device.currentPressStart);
             this.composedPress.start = null;
             this.composedPress.end = null;
         } else if (this.virtualRoom.devices.filter(device => device !== event.device).some(device => device.currentPress)) {
+        // else if a multi touch is detected 
+
             this.composedPress.start = event.device.currentPressStart
             this.composedPress.end = event;
         } else {
+        // else reset multi touch
+
             this.composedPress.start = null;
             this.composedPress.end = null;
         }

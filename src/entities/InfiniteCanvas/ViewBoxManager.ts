@@ -1,11 +1,17 @@
-export interface ViewBoxEntity {
-    pos?: { x: number; y: number };
-    size?: {width: number, height: number};
-}
+import { ViewBoxEntity } from "./types";
 
-export class ViewBox{
+/**
+ * Handle the viewbox casual action
+ * @internal
+ */
+export class ViewBoxManager{
     private constructor(){}
 
+    /**
+     * Get the center of the viewbox of the entity
+     *
+     * @param viewBoxEntity - the entity to get the center from
+     */
     static getCenter(viewBoxEntity: ViewBoxEntity) {
         if (viewBoxEntity.pos && viewBoxEntity.size) {
             return {
@@ -16,6 +22,12 @@ export class ViewBox{
         return undefined;
     }
 
+    /**
+     * Check if a point intersect with a viewBox
+     *
+     * @param point - the point to check intersection
+     * @param viewBox - the viewBox to check intersection
+     */
     static intersect(point: {x: number, y: number}, viewBox: ViewBoxEntity): boolean {
         if (!viewBox.pos || !viewBox.size) return false;
 
@@ -32,6 +44,12 @@ export class ViewBox{
         );
     }
 
+    /**
+     * Check if a viewBox intersect an other
+     *
+     * @param a - the first viewbox
+     * @param b - the second viewbox
+     */
     static intersectViewBox(a: ViewBoxEntity, b: ViewBoxEntity): boolean {
         if (!(a.pos && a.size && b.pos && b.size)) return false;
 

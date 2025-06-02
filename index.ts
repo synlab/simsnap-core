@@ -13,7 +13,7 @@ export { ServerSocketService } from './src/socketServices/VirtualRoom/ServerSock
 export { InfiniteCanvas } from './src/entities/InfiniteCanvas/InfiniteCanvas'
 export { CanvasDevice } from './src/entities/InfiniteCanvas/CanvasDevice'
 export { ViewBoxObject } from './src/entities/InfiniteCanvas/ViewBoxObject'
-export * from './src/entities/InfiniteCanvas/ViewBoxEntity'
+export * from './src/entities/InfiniteCanvas/ViewBoxManager'
 export * from './src/entities/InfiniteCanvas/types'
 
 export { CanvasClientSocketService } from './src/socketServices/InfiniteCanvas/CanvasClientSocketService'
