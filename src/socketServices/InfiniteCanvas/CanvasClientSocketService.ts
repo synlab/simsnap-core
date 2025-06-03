@@ -16,11 +16,11 @@ export class CanvasClientSocketService extends ClientSocketService {
 
     constructor(
         clientSocket: Socket,
-        override readonly virtualRoom: InfiniteCanvas,
-        override readonly device: CanvasDevice = new CanvasDevice())
+        override virtualRoom: InfiniteCanvas,
+        override device: CanvasDevice = new CanvasDevice())
     {
         super(clientSocket, virtualRoom, device);
-
+        
         this.timeInterval = setInterval(() => {
             this.handleUpdateScene();
         }, 50)

@@ -13,12 +13,12 @@ export class ClientSocketService {
 
     constructor(
         public readonly clientSocket: Socket,
-        public readonly virtualRoom: VirtualRoom,
-        public readonly device: Device = new Device()
+        public virtualRoom: VirtualRoom,
+        public device: Device = new Device()
     ) {
         console.log('✅ New client connected')
 
-        this.handleAddDevice()
+        this.handleAddDevice(this.device);
         
         clientSocket.on('clientSize', (data: {width: number, height: number}) => {
             this.handleClientSizeChange(data)
@@ -63,9 +63,11 @@ export class ClientSocketService {
     /**
      * Add a new device in the room, and trigger the {@link VirtualRoom.onAddDevice} event
      * @virtual
+     * 
+     * @param device - The Device to add
      */
-    handleAddDevice() {
-        this.virtualRoom.handleAddDevice(this.device);
+    handleAddDevice(device: Device) {
+        this.virtualRoom.handleAddDevice(device);
     }
 
     /**

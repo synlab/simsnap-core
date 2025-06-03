@@ -30,11 +30,12 @@ export class ViewBoxObject implements ViewBoxEntity {
      * @remarks
      * shallow copy on metaData and pressedBy
      * @remarks
-     * the id is not copied
+     * the id is copied
      */
     copy(): ViewBoxObject {
         const newObj = new ViewBoxObject(structuredClone(this.pos), structuredClone(this.size), this.metaData)
         newObj.pressedBy = structuredClone(this.pressedBy);
+        (newObj.id as {value: string}).value = this.id.value;
         return newObj;
     }
 

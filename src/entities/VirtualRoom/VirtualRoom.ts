@@ -112,6 +112,14 @@ export class VirtualRoom {
         this.onDeviceOrientationChange?.(event);
     }
 
+    /**
+     * Handle the destroying of the current obejct, and trigger the {@link VirtualRoom.onDestroy} event
+     * @virtual
+     */
+    handleDestroy() {
+        this.onDestroy?.();
+    }
+
 
     /*=============================================================================================*/
     /*                                      event listenner                                        */
@@ -210,6 +218,12 @@ export class VirtualRoom {
      * @param event - the device orientation change event
      */
     onDeviceOrientationChange?: (event: DeviceInteractionOrientationEvent) => void;
+
+    /**
+     * CallBack triggered when the current object is being destroy
+     * @eventProperty
+     */
+    onDestroy?: () => void;
 }
 
 export default VirtualRoom;
