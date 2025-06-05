@@ -1,5 +1,11 @@
+import { EventDispatcher } from "../VirtualRoom/EventDispatcher";
 import { DeviceInteractionPointerEvent, Id } from "../VirtualRoom/types";
 import { ViewBoxEntity } from "./types";
+
+export type ViewBoxObjectEvents = { 
+    click: DeviceInteractionPointerEvent,
+    grab: DeviceInteractionPointerEvent
+};
 
 /**
  * Representation of a Object with a viewbox in a Canvas context
@@ -10,6 +16,8 @@ import { ViewBoxEntity } from "./types";
  * @param preId - the optional substring to add before the final ID
  */
 export class ViewBoxObject implements ViewBoxEntity {
+    protected dispatcher = new EventDispatcher<ViewBoxObjectEvents>();
+
     readonly id: Id;
 
     /** The list of the CanvasDevice currently pressing the object */
@@ -23,6 +31,12 @@ export class ViewBoxObject implements ViewBoxEntity {
     {
         this.id = new Id(preId);
     }
+
+    /*== Dispatcher deleguate ==*/
+    public addEventListener = this.dispatcher.addEventListener.bind(this.dispatcher);
+    public removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
+    public emit = this.dispatcher.emit.bind(this.dispatcher);
+    /*== ==================== ==*/
 
     /**
      * copy the object
@@ -38,26 +52,6 @@ export class ViewBoxObject implements ViewBoxEntity {
         (newObj.id as {value: string}).value = this.id.value;
         return newObj;
     }
-
-    /*=============================================================================================*/
-    /*                                      event listenner                                        */
-    /*=============================================================================================*/
-
-    /**
-     * CallBack triggered when the object has been clicked
-     * @eventProperty
-     *
-     * @param event - the released event
-     */
-    onClick?: (event: DeviceInteractionPointerEvent)=>void;
-
-    /**
-     * CallBack triggered when the object is being grab
-     * @eventProperty
-     *
-     * @param event - the move event
-     */
-    onGrab?: (event: DeviceInteractionPointerEvent)=>void;
 }
 
 export default ViewBoxObject;

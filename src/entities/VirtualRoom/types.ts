@@ -58,3 +58,28 @@ export interface DeviceInteractionOrientationEvent {
     readonly beta: number,
     readonly gamma: number
 }
+
+/**
+ * Represent an Event triggered when two Device snaped or unSnaped
+ *
+ * @param event1 - the first snaped device event
+ * @param event2 - the second snaped device event
+ * 
+ * @remarks
+ * for snapEvent, the event are the release event - for unSnap, the event are the press event
+ */
+export interface SnapDevicesEvent {
+    readonly event1: DeviceInteractionPointerEvent,
+    readonly event2: DeviceInteractionPointerEvent
+}
+
+/**
+ * Represent an Event triggered on the device when snaped or unSnaped with an other one
+ *
+ * @param device - The device the current device has been snaped/unSnaped with
+ * @param position - The position of the snap on the current device
+ */
+export interface SnapEvent {
+    readonly device: Device,
+    readonly position: Position
+}

@@ -46,6 +46,10 @@ const sim = new SimSnap();
 sim.run();
 ```
 
+## Documentation
+
+The specifications follow the [TSDoc](https://tsdoc.org/) convention.
+
 ## Contributing
 
 Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.

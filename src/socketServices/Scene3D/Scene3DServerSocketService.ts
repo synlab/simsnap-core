@@ -1,38 +1,37 @@
-import Scene3D from '../../entities/Scene3D/Scene3D';
 import Object3D from '../../entities/Scene3D/Object3D';
-import ServerSocketService from '../VirtualRoom/ServerSocketService';
+import ServerSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ServerSocketService';
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 
+export type Scene3DClientSocketServiceEvents = ClientSocketServiceEvents & { 
+    sceneUpdate: Object3D[],
+};
+
+/**
+ * WebSocket Singleton service for using Scene3D virtualRoom from the client side
+ *
+ * @remarks
+ * need to be initialize with {@link ServerSocketService.InitConnection}
+ */
 export class Scene3DServerSocketService extends ServerSocketService {
-
-    /*============================================================================================*/
-    /*                                          handlers                                          */
-    /*============================================================================================*/
-
+    
+    /*== Dispatcher deleguate ==*/
+    static addEventListener = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).addEventListener.bind(this.dispatcher);
+    static removeEventListener = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).removeEventListener.bind(this.dispatcher);
+    static emit = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).emit.bind(this.dispatcher);
+    /*== ==================== ==*/
 
     /**
-     * Link update scene to the listener
-     * @override
+     * Link the different listener to the right ws emit message
+     * @virtual
      */
-    static override handleConnection(clientWidth: number, clientHeight: number) {
-        ServerSocketService.Connection.on('updateScene', (data: Object3D[]) => {
-            this.onSceneUpdate?.(data);
-        })
-        super.handleConnection(clientHeight, clientHeight);
+    protected static override LinkListener(){
+        super.LinkListener();
+        this.addEventListener("connect", ()=>{
+            ServerSocketService.Connection.on('updateScene', (data: Object3D[]) => {
+                this.emit("sceneUpdate", data)
+            })
+        });
     }
-
-
-    /*=============================================================================================*/
-    /*                                      event listenner                                        */
-    /*=============================================================================================*/
-
-
-    /**
-     * CallBack transfering the scene fresh update
-     * @eventProperty
-     * 
-     * @see {@link Scene3D.onSceneUpdate}
-     */
-    static onSceneUpdate?: (data: Object3D[]) => void;
 }
 
 export default Scene3DServerSocketService;

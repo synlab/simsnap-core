@@ -67,9 +67,9 @@ export class SnapManager {
         const pos2 = this.positionOnViewPort(eventEnd2);
         if (pos1 && pos2) this.pairs.forEach(pair => {
             if (pos1.includes(pair[0]) && pos2.includes(pair[1])) {
-                eventEnd1.device.snapTo(eventEnd2.device, pair[0]);
-                eventEnd2.device.snapTo(eventEnd1.device, pair[1]);
-                this.virtualRoom.onSnapDevices?.(eventEnd1, eventEnd2);
+                eventEnd1.device.emit("snap", { device: eventEnd2.device, position: pair[0] });
+                eventEnd2.device.emit("snap",{ device: eventEnd1.device, position: pair[1] });
+                this.virtualRoom.emit("snapDevices", { event1: eventEnd1, event2: eventEnd2 });
             }
         });
     }
@@ -79,9 +79,9 @@ export class SnapManager {
         const pos2 = this.positionOnViewPort(eventStart2);
         if (pos1 && pos2) this.pairs.forEach(pair => {
             if (pos1.includes(pair[0]) && pos2.includes(pair[1])) {
-                eventStart1.device.unSnapTo(eventStart2.device, pair[0]);
-                eventStart2.device.unSnapTo(eventStart1.device, pair[1]);
-                this.virtualRoom.onUnSnapDevices?.(eventStart1, eventStart2);
+                eventStart1.device.emit("unSnap", { device: eventStart2.device, position: pair[0] });
+                eventStart2.device.emit("unSnap", { device: eventStart1.device, position: pair[1] });
+                this.virtualRoom.emit("unSnapDevices", { event1: eventStart1, event2: eventStart2 });
             }
         });
     }

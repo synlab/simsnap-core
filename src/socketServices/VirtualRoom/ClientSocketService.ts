@@ -1,6 +1,11 @@
 import { Socket } from "socket.io";
 import { Device } from "../../entities/VirtualRoom/Device";
 import { VirtualRoom } from "../../entities/VirtualRoom/VirtualRoom";
+import { EventDispatcher } from "../../entities/VirtualRoom/EventDispatcher";
+
+export type ClientSocketServiceEvents = {
+  destroy: undefined;
+};
 
 /**
  * WebSocket service for using virtualRoom from the server side
@@ -10,6 +15,7 @@ import { VirtualRoom } from "../../entities/VirtualRoom/VirtualRoom";
  * @param device - the device representative object attribuated to the client
  */
 export class ClientSocketService {
+    protected dispatcher = new EventDispatcher<ClientSocketServiceEvents>();
 
     constructor(
         public readonly clientSocket: Socket,
@@ -17,34 +23,48 @@ export class ClientSocketService {
         public device: Device = new Device()
     ) {
         console.log('✅ New client connected')
-
-        this.handleAddDevice(this.device);
+        this.virtualRoom.emit('addDevice', this.device);
         
         clientSocket.on('clientSize', (data: {width: number, height: number}) => {
             this.handleClientSizeChange(data)
         })
 
         clientSocket.on('devicePress', (data: {x: number, y: number}) => {
-            this.handleDevicePress(data);
+            this.virtualRoom.emit('devicePress', {device: this.device, ...data});
         })
     
         clientSocket.on('deviceMove', (data: {x: number, y: number}) => {
-            this.handleDeviceMove(data);
+            this.virtualRoom.emit('deviceMove', {device: this.device, ...data});
         })
 
         clientSocket.on('deviceRelease', (data: {x: number, y: number}) => {
-            this.handleDeviceRelease(data);
+            this.virtualRoom.emit('deviceRelease', {device: this.device, ...data});
         })
 
         clientSocket.on('deviceOrientationChange', (data: {alpha: number, beta: number, gamma: number}) => {
-            this.handleDeviceOrientationChange(data)
+            this.virtualRoom.emit('deviceOrientationChange', {device: this.device, ...data})
         })
     
         clientSocket.on('disconnect', () => {
-            this.handleDisconnect();
+            this.virtualRoom.emit('removeDevice', this.device);
+            this.emit('destroy', undefined);
+            console.log('❌ Client disconnected')
         })
+
+        this.linkListener();
     }
 
+    /*== Dispatcher deleguate ==*/
+    public addEventListener = this.dispatcher.addEventListener.bind(this.dispatcher);
+    public removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
+    public emit = this.dispatcher.emit.bind(this.dispatcher);
+    /*== ==================== ==*/
+
+    /**
+     * Link the different listener to the right ws emit message
+     * @virtual
+     */
+    protected linkListener() { }
     
     /*============================================================================================*/
     /*                                          handlers                                          */
@@ -52,84 +72,12 @@ export class ClientSocketService {
 
     /**
      * Change the size of the current device instance
-     * @virtual
      *
      * @param data - The WebSocketTransmited data
      */
-    handleClientSizeChange(data: {width: number, height: number}) {
+    private handleClientSizeChange(data: {width: number, height: number}) {
         this.device.size = data;
     }
-
-    /**
-     * Add a new device in the room, and trigger the {@link VirtualRoom.onAddDevice} event
-     * @virtual
-     * 
-     * @param device - The Device to add
-     */
-    handleAddDevice(device: Device) {
-        this.virtualRoom.handleAddDevice(device);
-    }
-
-    /**
-     * Hanlde a disconection by remove device from the room, and trigger the {@link ClientSocketService.onDisconnect} and {@link VirtualRoom.onRemoveDevice} event
-     * @virtual
-     */
-    handleDisconnect() {
-        this.virtualRoom.handleRemoveDevice(this.device);
-        this.onDisconnect?.();
-        console.log('❌ Client disconnected')
-    }
-
-    /**
-     * Handle a press pointer by a device, and trigger the {@link VirtualRoom.onDevicePress} event
-     * @virtual
-     *
-     * @param data - The WebSocketTransmited data
-     */
-    handleDevicePress(data: {x: number, y: number}) {
-        this.virtualRoom.handleDevicePress({device : this.device, x: data.x, y: data.y});
-    }
-
-    /**
-     * Handle a move pointer by a device, and trigger the {@link VirtualRoom.onDeviceMove} event
-     * @virtual
-     *
-     * @param data - The WebSocketTransmited data
-     */
-    handleDeviceMove(data: {x: number, y: number}) {
-        this.virtualRoom.handleDeviceMove({device : this.device, x: data.x, y: data.y})
-    }
-
-    /**
-     * Handle a release pointer by a device, and trigger the {@link VirtualRoom.onDeviceRelease} event
-     * @virtual
-     *
-     * @param data - The WebSocketTransmited data
-     */
-    handleDeviceRelease(data: {x: number, y: number}) {
-        this.virtualRoom.handleDeviceRelease({device : this.device, x: data.x, y: data.y});
-    }
-
-    /**
-     * Handle a change of the device orientation, and trigger the {@link VirtualRoom.onDeviceOrientationChange} event
-     * @virtual
-     *
-     * @param data - The WebSocketTransmited data
-     */
-    handleDeviceOrientationChange(data: {alpha: number, beta: number, gamma: number}) {
-        this.virtualRoom.handleDeviceOrientationChange({device : this.device, alpha: data.alpha, beta: data.beta, gamma: data.gamma});
-    }
-
-
-    /*=============================================================================================*/
-    /*                                      event listenner                                        */
-    /*=============================================================================================*/
-
-    /**
-     * CallBack triggered when a Client is disconnected
-     * @eventProperty
-     */
-    onDisconnect?: () => void;
 }
 
 export default ClientSocketService;
