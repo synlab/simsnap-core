@@ -1,5 +1,4 @@
 import Device from "../VirtualRoom/Device";
-import { EventDispatcher } from "../VirtualRoom/EventDispatcher";
 import { VirtualRoom, VirtualRoomEvents } from "../VirtualRoom/VirtualRoom";
 import Object3D from "./Object3D";
 
@@ -11,7 +10,7 @@ export type Scene3DEvents = VirtualRoomEvents & { sceneUpdate: Object3D[] };
  * @param devices - the list of device to add to the room
  * @param sceneObjects - the list of 3D object to add to the scene
  */
-export class Scene3D extends VirtualRoom {
+export class Scene3D<Events extends Scene3DEvents = Scene3DEvents> extends VirtualRoom<Events> {
 	private timeInterval: NodeJS.Timeout | undefined;
 
 	constructor(
@@ -25,12 +24,6 @@ export class Scene3D extends VirtualRoom {
 
 		this.addEventListener('destroy', this.handleDestroy.bind(this))
 	}
-
-	/*== Dispatcher deleguate ==*/
-    public addEventListener = (this.dispatcher as EventDispatcher<Scene3DEvents>).addEventListener.bind(this.dispatcher);
-    public removeEventListener = (this.dispatcher as EventDispatcher<Scene3DEvents>).removeEventListener.bind(this.dispatcher);
-    public emit = (this.dispatcher as EventDispatcher<Scene3DEvents>).emit.bind(this.dispatcher);
-    /*== ==================== ==*/
 	
 	/**
      * Update the 3D scene, and trigger the {@link Scene3DEvents.sceneUpdate} event

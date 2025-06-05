@@ -14,8 +14,8 @@ export type ClientSocketServiceEvents = {
  * @param virtualRoom - the object representation of the virtual room
  * @param device - the device representative object attribuated to the client
  */
-export class ClientSocketService {
-    protected dispatcher = new EventDispatcher<ClientSocketServiceEvents>();
+export class ClientSocketService<Events extends ClientSocketServiceEvents = ClientSocketServiceEvents> {
+    protected dispatcher = new EventDispatcher<Events>();
 
     constructor(
         public readonly clientSocket: Socket,

@@ -4,7 +4,7 @@ type Listener<T> = {
 };
 
 export class EventDispatcher<Events extends Record<string, any>> {
-  private listeners: {
+  public listeners: {
     [K in keyof Events]?: Listener<Events[K]>[];
   } = {};
 
@@ -31,8 +31,6 @@ export class EventDispatcher<Events extends Record<string, any>> {
   emit<K extends keyof Events>(type: K, event: Events[K]): void {
     const list = this.listeners[type];
     if (!list) return;
-    for (const { callback } of list) {
-      callback(event);
-    }
+    list.forEach(({callback})=>callback(event));
   }
 }

@@ -17,8 +17,8 @@ export type DeviceEvents = {
  * @param metaData - an optional Record of custom any, by string key
  * @param preId - the optional substring to add before the final ID
  */
-export class Device {
-    protected dispatcher = new EventDispatcher<DeviceEvents>();
+export class Device<Events extends DeviceEvents = DeviceEvents> {
+    private dispatcher = new EventDispatcher<Events>();
     
     readonly id: Id;
 

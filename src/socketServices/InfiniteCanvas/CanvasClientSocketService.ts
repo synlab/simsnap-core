@@ -25,7 +25,7 @@ export class CanvasClientSocketService extends ClientSocketService {
      * @virtual
      */
     protected override linkListener() {
-        this.virtualRoom.addEventListener('sceneUpdate', (sceneObjects: ViewBoxObject[])=>{
+        this.device.addEventListener('sceneUpdate', (sceneObjects: ViewBoxObject[])=>{
             this.clientSocket.emit('updateScene', sceneObjects);
         });
     }

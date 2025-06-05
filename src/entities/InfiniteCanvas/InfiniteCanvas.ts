@@ -1,5 +1,4 @@
 import { distance } from "../Utils";
-import { EventDispatcher } from "../VirtualRoom/EventDispatcher";
 import { VirtualRoom, VirtualRoomEvents } from "../VirtualRoom/VirtualRoom";
 import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
 import CanvasDevice from "./CanvasDevice";
@@ -8,7 +7,6 @@ import { ViewBoxObject } from "./ViewBoxObject";
 import { DeviceInteractionPointerEventOnCanvas } from "./types";
 
 export type InfiniteCanvasEvents = VirtualRoomEvents & { 
-	sceneUpdate: ViewBoxObject[],
 	devicePressOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceMoveOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceReleaseOnCanvas: DeviceInteractionPointerEventOnCanvas;
@@ -20,7 +18,7 @@ export type InfiniteCanvasEvents = VirtualRoomEvents & {
  * @param devices - the list of CanvasDevice to add to the room
  * @param sceneObjects - the list of object to add to the scene
  */
-export class InfiniteCanvas extends VirtualRoom {
+export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvasEvents> extends VirtualRoom<Events> {
 	
 	private timeInterval: NodeJS.Timeout | undefined;
 
@@ -32,8 +30,8 @@ export class InfiniteCanvas extends VirtualRoom {
 	) {
 		super(devices)
         this.addEventListener("devicePress", (event) => this.handlePointerTo(event, "devicePressOnCanvas"));
-        this.addEventListener("deviceMove", (event) => this.handlePointerTo(event, "deviceMoveOnCanvas"));
-        this.addEventListener("deviceRelease", (event) => this.handlePointerTo(event, "deviceReleaseOnCanvas"));
+        this.addEventListener("deviceMove", (event) => this.handlePointerTo(event, "deviceMoveOnCanvas"), 1);
+        this.addEventListener("deviceRelease", (event) => this.handlePointerTo(event, "deviceReleaseOnCanvas"), 1);
 		this.addEventListener("devicePressOnCanvas", this.handleDevicePressOnCanvas.bind(this));
         this.addEventListener("deviceMoveOnCanvas", this.handleDeviceMoveOnCanvas.bind(this));
         this.addEventListener("deviceReleaseOnCanvas", this.handleDeviceReleaseOnCanvas.bind(this));
@@ -43,12 +41,6 @@ export class InfiniteCanvas extends VirtualRoom {
             this.updateSceneObjects();
         }, 50)
 	}
-
-	/*== Dispatcher deleguate ==*/
-    public addEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasEvents>).addEventListener.bind(this.dispatcher);
-    public removeEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasEvents>).removeEventListener.bind(this.dispatcher);
-    public emit = (this.dispatcher as EventDispatcher<InfiniteCanvasEvents>).emit.bind(this.dispatcher);
-    /*== ==================== ==*/
 
 	/**
      * Update the scene, and trigger the {@link InfiniteCanvasEvents.sceneUpdate} event
@@ -60,7 +52,7 @@ export class InfiniteCanvas extends VirtualRoom {
 			if (!devicePos || !device.size) {
 				return;
 			}
-			this.emit('sceneUpdate', 
+			device.emit('sceneUpdate', 
 				this.sceneObjects
 					.filter(obj => ViewBoxManager.intersectViewBox(obj, device))
 					.map(obj => {
@@ -84,7 +76,7 @@ export class InfiniteCanvas extends VirtualRoom {
 	 * @param event - The event emit from the device
 	 * @param eventType - The event type to transfert
      */
-	private handlePointerTo(event: DeviceInteractionPointerEvent, eventType: keyof InfiniteCanvasEvents) {
+	private handlePointerTo(event: DeviceInteractionPointerEvent, eventType: "devicePressOnCanvas" | "deviceMoveOnCanvas" | "deviceReleaseOnCanvas") {
 		const device = this.devices.find(d => d.id == event.device.id);
 		if (device?.pos && device.size) {
 			this.emit(eventType, new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y))
@@ -128,8 +120,7 @@ export class InfiniteCanvas extends VirtualRoom {
 			if (event.posCanvas && event.device.currentPress.posCanvas && distance(event.posCanvas, event.device.currentPress.posCanvas) < 10) {
 				this.sceneObjects.filter(el => el.pressedBy.includes(event.device.id)).forEach(el => el.emit('click', event))
 			}
-
-            this.sceneObjects.forEach(el => el.pressedBy.filter(id => id === event.device.id));
+            this.sceneObjects.forEach(el => el.pressedBy = el.pressedBy.filter(id => id !== event.device.id));
 		}
 	}
 

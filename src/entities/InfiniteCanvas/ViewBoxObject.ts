@@ -15,8 +15,8 @@ export type ViewBoxObjectEvents = {
  * @param metaData - an optional Record of custom any, by string key
  * @param preId - the optional substring to add before the final ID
  */
-export class ViewBoxObject implements ViewBoxEntity {
-    protected dispatcher = new EventDispatcher<ViewBoxObjectEvents>();
+export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEvents> implements ViewBoxEntity {
+    private dispatcher = new EventDispatcher<Events>();
 
     readonly id: Id;
 
@@ -46,8 +46,8 @@ export class ViewBoxObject implements ViewBoxEntity {
      * @remarks
      * the id is copied
      */
-    copy(): ViewBoxObject {
-        const newObj = new ViewBoxObject(structuredClone(this.pos), structuredClone(this.size), this.metaData)
+    copy(): ViewBoxObject<Events> {
+        const newObj = new ViewBoxObject<Events>(structuredClone(this.pos), structuredClone(this.size), this.metaData)
         newObj.pressedBy = structuredClone(this.pressedBy);
         (newObj.id as {value: string}).value = this.id.value;
         return newObj;
