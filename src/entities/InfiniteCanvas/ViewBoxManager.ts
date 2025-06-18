@@ -13,13 +13,28 @@ export class ViewBoxManager{
      * @param viewBoxEntity - the entity to get the center from
      */
     static getCenter(viewBoxEntity: ViewBoxEntity) {
-        if (viewBoxEntity.pos && viewBoxEntity.size) {
-            return {
-                x: viewBoxEntity.pos.x + viewBoxEntity.size.width / 2,
-                y: viewBoxEntity.pos.y + viewBoxEntity.size.height / 2,
+        if (!viewBoxEntity.pos || !viewBoxEntity.size) return undefined;
+        return {
+            x: viewBoxEntity.pos.x + viewBoxEntity.size.width / 2,
+            y: viewBoxEntity.pos.y + viewBoxEntity.size.height / 2,
+        }
+    }
+
+    /**
+     * Move the entity to fit the center on the point
+     *
+     * @param point - the point to set the center of the entity on
+     * @param viewBoxEntity - the entity to set the center
+     */
+    static setCenter(point: { x: number, y: number }, viewBoxEntity: ViewBoxEntity) {
+        if (!viewBoxEntity.size) {
+            viewBoxEntity.pos = point;
+        } else {
+            viewBoxEntity.pos = {
+                x: point.x - viewBoxEntity.size.width / 2,
+                y: point.y - viewBoxEntity.size.height / 2,
             }
         }
-        return undefined;
     }
 
     /**

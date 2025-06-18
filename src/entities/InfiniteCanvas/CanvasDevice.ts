@@ -1,6 +1,7 @@
 import { Device, DeviceEvents } from "../VirtualRoom/Device";
 import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
 import ViewBoxObject from "./ViewBoxObject";
+import { ViewBoxManager } from "./ViewBoxManager";
 
 
 export type CanvasDeviceEvents = DeviceEvents & { 
@@ -28,6 +29,57 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         preId: string = 'canvaDevice'
     ) {
         super(size, metaData, preId);
+    }
+
+    /**
+     * Get the center of the viewbox of the entity
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.getCenter}
+     */
+    get center(): { x: number, y: number } | undefined {
+        return ViewBoxManager.getCenter(this);
+    }
+
+    /**
+     * Move the entity to fit the center on the point
+     *
+     * @param point - the point to set the center of the entity on
+     * 
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.setCenter}
+     */
+    set center(point: { x: number, y: number }) {
+        ViewBoxManager.setCenter(point, this)
+    }
+        
+
+    /**
+     * Check if a point intersect with the current viewBox
+     * 
+     * @param point - the point to check intersection
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersect}
+     */
+    public isIntersect(point: {x: number, y: number}): boolean {
+        return ViewBoxManager.intersect(point, this);
+    }
+
+    /**
+     * Check if a viewBox intersect the current viewBox
+     * 
+     * @param viewbox - the viewBox to check intersection with
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersectViewBox}
+     */
+    public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
+        return ViewBoxManager.intersectViewBox(this, viewbox);
     }
 }
 
