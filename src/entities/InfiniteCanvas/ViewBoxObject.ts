@@ -1,5 +1,6 @@
 import { DeviceInteractionPointerEvent, Id } from "../VirtualRoom/types";
 import { ViewBoxEntity } from "./types";
+import { ViewBoxManager } from "./ViewBoxManager";
 
 /**
  * Representation of a Object with a viewbox in a Canvas context
@@ -19,9 +20,62 @@ export class ViewBoxObject implements ViewBoxEntity {
         public pos?: {x: number, y: number},
         public size?: {width: number, height: number},
         public metaData?: Record<string, any>,
-        preId: string = 'viewBoxObject',)
+        preId: string = 'viewBoxObject',
+        center?: {x: number, y: number},
+    )
     {
         this.id = new Id(preId);
+        if (center) this.center = center;
+    }
+
+    /**
+     * Get the center of the viewbox of the entity
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.getCenter}
+     */
+    get center(): { x: number, y: number } | undefined {
+        return ViewBoxManager.getCenter(this);
+    }
+
+    /**
+     * Move the entity to fit the center on the point
+     *
+     * @param point - the point to set the center of the entity on
+     * 
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.setCenter}
+     */
+    set center(point: { x: number, y: number }) {
+        ViewBoxManager.setCenter(point, this)
+    }
+
+    /**
+     * Check if a point intersect with the current viewBox
+     * 
+     * @param point - the point to check intersection
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersect}
+     */
+    public isIntersect(point: {x: number, y: number}): boolean {
+        return ViewBoxManager.intersect(point, this);
+    }
+
+    /**
+     * Check if a viewBox intersect the current viewBox
+     * 
+     * @param viewbox - the viewBox to check intersection with
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersectViewBox}
+     */
+    public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
+        return ViewBoxManager.intersectViewBox(this, viewbox);
     }
 
     /**

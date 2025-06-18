@@ -1,7 +1,6 @@
 import { distance, removeItem } from "../Utils";
 import { VirtualRoom } from "../VirtualRoom/VirtualRoom";
 import CanvasDevice from "./CanvasDevice";
-import { ViewBoxManager } from "./ViewBoxManager";
 import { ViewBoxObject } from "./ViewBoxObject";
 import { DeviceInteractionPointerEventOnCanvas } from "./types";
 
@@ -39,7 +38,7 @@ export class InfiniteCanvas extends VirtualRoom {
 			return [];
 		}
 		return this.sceneObjects
-			.filter(obj => ViewBoxManager.intersectViewBox(obj, device))
+			.filter(obj => device.isIntersectViewBox(obj))
 			.map(obj => {
 				const newObj = obj.copy();
 				newObj.pos && (newObj.pos = { x: newObj.pos.x - devicePos.x, y: newObj.pos.y - devicePos.y });
@@ -63,7 +62,7 @@ export class InfiniteCanvas extends VirtualRoom {
      */
 	override handleDevicePress(event: DeviceInteractionPointerEventOnCanvas) {
 		const canvaPos = event.posCanvas;
-		canvaPos && this.sceneObjects.filter(el => ViewBoxManager.intersect(canvaPos, el)).forEach(el => el.pressedBy.push(event.device.id));
+		canvaPos && this.sceneObjects.filter(el => el.isIntersect(canvaPos)).forEach(el => el.pressedBy.push(event.device.id));
 		super.handleDevicePress(event);
 	}
 

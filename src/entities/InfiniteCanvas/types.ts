@@ -6,10 +6,34 @@ import CanvasDevice from "./CanvasDevice";
  *
  * @param pos - the position of the object on the canvas
  * @param size - the size of the viewbox
+ * @param center - the center of the viewbox
  */
 export interface ViewBoxEntity {
     pos?: { x: number; y: number };
     size?: {width: number, height: number};
+    center?: { x: number; y: number };
+    
+    /**
+     * Check if a point intersect with the current viewBox
+     * 
+     * @param point - the point to check intersection
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersect}
+     */
+    isIntersect(point: {x: number, y: number}): boolean;
+
+    /**
+     * Check if a viewBox intersect the current viewBox
+     * 
+     * @param viewbox - the viewBox to check intersection with
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersectViewBox}
+     */
+    isIntersectViewBox(viewbox: ViewBoxEntity): boolean;
 }
 
 /**
