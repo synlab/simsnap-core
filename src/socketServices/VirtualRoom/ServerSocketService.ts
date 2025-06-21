@@ -1,4 +1,15 @@
 import { io, Socket } from 'socket.io-client'
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
+
+export type ClientSocketServiceEvents = {
+    connect: undefined;
+    clientSize: { width: number, height: number }
+    pointerPress: { x: number, y: number };
+    pointerMove: { x: number, y: number };
+    pointerRelease: { x: number, y: number };
+    orientationChange: { alpha: number, beta: number, gamma: number } 
+    destroy: undefined;
+};
 
 /**
  * WebSocket Singleton service for using virtualRoom from the client side
@@ -7,6 +18,14 @@ import { io, Socket } from 'socket.io-client'
  * need to be initialize with {@link ServerSocketService.InitConnection}
  */
 export class ServerSocketService {
+    protected static dispatcher = new EventDispatcher<ClientSocketServiceEvents>();
+
+    /*== Dispatcher deleguate ==*/
+    static addEventListener = this.dispatcher.addEventListener.bind(this.dispatcher);
+    static removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
+    static emit = this.dispatcher.emit.bind(this.dispatcher);
+    /*== ==================== ==*/
+    
     /* The current socket connection to the server */
     static Connection: Socket;
 
@@ -23,98 +42,34 @@ export class ServerSocketService {
      */
     static InitConnection(ip = 'localhost', port = 4000, clientWidth: number, clientHeight: number, https = false) {
         if (!ServerSocketService.Connection) {
+            this.LinkListener();
             ServerSocketService.Connection = io(`${https ? 'https' : 'http'}://${ip}:${port}`, { ...(https ? { secure: true } : {})});
             console.log(`🔌 Connecting to server at ${https ? 'https' : 'http'}://${ip}:${port}`);
             
             ServerSocketService.Connection.on('connect', () => {
-                this.handleConnection(clientWidth, clientHeight);
+                this.emit('connect', undefined)
                 
-                this.onConnect?.();
+                this.emit('clientSize', {
+                    width: clientWidth,
+                    height: clientHeight
+                })
             });
         }
     }
 
-    /*============================================================================================*/
-    /*                                          handlers                                          */
-    /*============================================================================================*/
-
-
     /**
-     * Send the required data to the server to init the Server-side's Client
+     * Link the different listener to the right ws emit message
      * @virtual
      */
-    static handleConnection(clientWidth: number, clientHeight: number) {
-        console.log('🔌 Connected to server')
-        ServerSocketService.Connection.emit('clientSize', {
-            width: clientWidth,
-            height: clientHeight
-        })
+    protected static LinkListener(){
+        ServerSocketService.addEventListener("connect", ()=>console.log('🔌 Connected to server'));
+        ServerSocketService.addEventListener("clientSize", (event) => this.Connection.emit('clientSize', event));
+        ServerSocketService.addEventListener("pointerPress", (event) => this.Connection.emit('devicePress', event));
+        ServerSocketService.addEventListener("pointerMove", (event) => this.Connection.emit('deviceMove', event));
+        ServerSocketService.addEventListener("pointerRelease", (event) => this.Connection.emit('deviceRelease', event));
+        ServerSocketService.addEventListener("orientationChange", (event) => this.Connection.emit('deviceOrientationChange', event));
+        ServerSocketService.addEventListener("destroy", ()=> this.Connection.close());
     }
-
-    /**
-     * Close the connection
-     * @virtual
-     */
-    static handleCloseConnection() {
-        ServerSocketService.Connection.close();
-    }
-
-    /**
-     * Handle a press pointer by a device
-     * @virtual
-     *
-     * @param x - the x position of the event
-     * @param y - the y position of the event
-     */
-    public static handleDevicePress(x: number, y: number) {
-        ServerSocketService.Connection.emit('devicePress', { x, y });
-    }
-
-    /**
-     * Handle a move pointer by a device
-     * @virtual
-     *
-     * @param x - the x position of the event
-     * @param y - the y position of the event
-     */
-    public static handleDeviceMove(x: number, y: number) {
-        ServerSocketService.Connection.emit('deviceMove', { x, y });
-    }
-
-    /**
-     * Handle a release pointer by a device
-     * @virtual
-     *
-     * @param x - the x position of the event
-     * @param y - the y position of the event
-     */
-    public static handleDeviceRelease(x: number, y: number) {
-        ServerSocketService.Connection.emit('deviceRelease', { x, y });
-    }
-
-    /**
-     * Handle a change of the device orientation
-     * @virtual
-     *
-     * @param alpha
-     * @param beta
-     * @param gamma
-     */
-    public static handleDeviceOrientationChange(alpha: number, beta: number, gamma: number) {
-        ServerSocketService.Connection.emit('deviceOrientationChange', { alpha, beta, gamma });
-    }
-
-    
-    /*=============================================================================================*/
-    /*                                      event listenner                                        */
-    /*=============================================================================================*/
-
-
-    /**
-     * CallBack triggered when a the connection is established
-     * @eventProperty
-     */
-    static onConnect?: () => void;
 }
 
 export default ServerSocketService;

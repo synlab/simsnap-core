@@ -1,5 +1,11 @@
-import { Device } from "../VirtualRoom/Device";
+import { Device, DeviceEvents } from "../VirtualRoom/Device";
 import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
+import ViewBoxObject from "./ViewBoxObject";
+
+
+export type CanvasDeviceEvents = DeviceEvents & { 
+    sceneUpdate: ViewBoxObject[],
+};
 
 /**
  * Represent an entity having a viewBox
@@ -9,7 +15,7 @@ import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
  * @param metaData - an optional Record of custom any, by string key
  * @param preId - the optional substring to add before the final ID
  */
-export class CanvasDevice extends Device implements ViewBoxEntity {
+export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents> extends Device<Events> implements ViewBoxEntity {
     /** The press event of the current active pointer event, initialized directly on press */
     override currentPressStart: DeviceInteractionPointerEventOnCanvas | null = null;
     /** The press/move event of the current pointer event, initialized directly on press and updated on move */

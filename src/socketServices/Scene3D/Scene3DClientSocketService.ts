@@ -2,48 +2,27 @@ import { Socket } from "socket.io";
 import ClientSocketService from "../VirtualRoom/ClientSocketService";
 import Scene3D from "../../entities/Scene3D/Scene3D";
 import Device from "../../entities/VirtualRoom/Device";
+import Object3D from "../../entities/Scene3D/Object3D";
 
 /**
- * WebSocket Singleton service for using Scene3D virtualRoom from the client side
+ * WebSocket service for using a Scene3D virtualRoom from the server side
  *
- * @remarks
- * need to be initialize with {@link ServerSocketService.InitConnection}
+ * @param clientSocket - the socket of the client
+ * @param virtualRoom - the object representation of the Scene3D virtual room
+ * @param device - the device representative object attribuated to the client
  */
 export class Scene3DClientSocketService extends ClientSocketService {
-    private timeInterval: NodeJS.Timeout | undefined;
-
     constructor(clientSocket: Socket, override readonly virtualRoom: Scene3D, device?: Device)
-    {
-        super(clientSocket, virtualRoom, device);
-    
-        this.timeInterval = setInterval(() => {
-            this.handleUpdateScene();
-        }, 50)
-    }
-    
-
-    /*============================================================================================*/
-    /*                                          handlers                                          */
-    /*============================================================================================*/
-
+    { super(clientSocket, virtualRoom, device); }
 
     /**
-     * Hanlde a update of the scene
+     * Link the different listener to the right ws emit message
      * @virtual
      */
-    handleUpdateScene() {
-        this.clientSocket.emit('updateScene', this.virtualRoom.updateSceneObjects());
-    }
-
-    /**
-     * Hanlde a disconection by remove device from the room
-     * @override
-     * 
-     * @see {@link ClientSocketService.handleDisconnect}
-     */
-    override handleDisconnect() {
-        clearInterval(this.timeInterval);
-        super.handleDisconnect();
+    protected override linkListener() {
+        this.virtualRoom.addEventListener('sceneUpdate', (sceneObjects: Object3D[])=>{
+            this.clientSocket.emit('updateScene', sceneObjects);
+        });
     }
 }
 

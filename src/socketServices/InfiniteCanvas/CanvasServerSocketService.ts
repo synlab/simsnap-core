@@ -1,6 +1,10 @@
-import { InfiniteCanvas } from '../../entities/InfiniteCanvas/InfiniteCanvas';
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 import { ViewBoxObject } from '../../entities/InfiniteCanvas/ViewBoxObject';
-import ServerSocketService from '../VirtualRoom/ServerSocketService';
+import ServerSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ServerSocketService';
+
+export type InfiniteCanvasClientSocketServiceEvents = ClientSocketServiceEvents & { 
+    sceneUpdate: ViewBoxObject[],
+};
 
 /**
  * WebSocket Singleton service for using InfiniteCanvas virtualRoom from the client side
@@ -10,35 +14,24 @@ import ServerSocketService from '../VirtualRoom/ServerSocketService';
  */
 export class CanvasServerSocketService extends ServerSocketService {
 
-    /*============================================================================================*/
-    /*                                          handlers                                          */
-    /*============================================================================================*/
-
+    /*== Dispatcher deleguate ==*/
+    static addEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).addEventListener.bind(this.dispatcher);
+    static removeEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).removeEventListener.bind(this.dispatcher);
+    static emit = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).emit.bind(this.dispatcher);
+    /*== ==================== ==*/
 
     /**
-     * Link update scene to the listener
-     * @override
+     * Link the different listener to the right ws emit message
+     * @virtual
      */
-    static override handleConnection(clientWidth: number, clientHeight: number) {
-        ServerSocketService.Connection.on('updateScene', (data: ViewBoxObject[]) => {
-            this.onSceneUpdate?.(data);
-        })
-        super.handleConnection(clientWidth, clientHeight);
+    protected static override LinkListener(){
+        super.LinkListener();
+        this.addEventListener("connect", ()=>{
+            ServerSocketService.Connection.on('updateScene', (data: ViewBoxObject[]) => {
+                this.emit("sceneUpdate", data)
+            })
+        });
     }
-
-    
-    /*=============================================================================================*/
-    /*                                      event listenner                                        */
-    /*=============================================================================================*/
-
-
-    /**
-     * CallBack transfering the scene fresh update
-     * @eventProperty
-     * 
-     * @see {@link InfiniteCanvas.onSceneUpdate}
-     */
-    static onSceneUpdate?: (data: ViewBoxObject[]) => void;
 }
 
 export default CanvasServerSocketService;
