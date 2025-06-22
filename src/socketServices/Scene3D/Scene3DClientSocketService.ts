@@ -13,13 +13,8 @@ import Object3D from "../../entities/Scene3D/Object3D";
  */
 export class Scene3DClientSocketService extends ClientSocketService {
     constructor(clientSocket: Socket, override readonly virtualRoom: Scene3D, device?: Device)
-    { super(clientSocket, virtualRoom, device); }
-
-    /**
-     * Link the different listener to the right ws emit message
-     * @virtual
-     */
-    protected override linkListener() {
+    { 
+        super(clientSocket, virtualRoom, device);
         this.virtualRoom.addEventListener('sceneUpdate', (sceneObjects: Object3D[])=>{
             this.clientSocket.emit('updateScene', sceneObjects);
         });

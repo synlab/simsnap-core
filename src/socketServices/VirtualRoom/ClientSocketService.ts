@@ -15,7 +15,7 @@ export type ClientSocketServiceEvents = {
  * @param device - the device representative object attribuated to the client
  */
 export class ClientSocketService<Events extends ClientSocketServiceEvents = ClientSocketServiceEvents> {
-    protected dispatcher = new EventDispatcher<Events>();
+    private dispatcher = new EventDispatcher<Events>();
 
     constructor(
         public readonly clientSocket: Socket,
@@ -51,7 +51,7 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
             console.log('❌ Client disconnected')
         })
 
-        this.linkListener();
+        this.addEventListener('destroy', this.destroy.bind(this))
     }
 
     /*== Dispatcher deleguate ==*/
@@ -59,12 +59,6 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
     public removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
     public emit = this.dispatcher.emit.bind(this.dispatcher);
     /*== ==================== ==*/
-
-    /**
-     * Link the different listener to the right ws emit message
-     * @virtual
-     */
-    protected linkListener() { }
     
     /*============================================================================================*/
     /*                                          handlers                                          */
@@ -77,6 +71,13 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
      */
     private handleClientSizeChange(data: {width: number, height: number}) {
         this.device.size = data;
+    }
+
+    /**
+     * Handle the destroy of the current object
+     */
+    private destroy() {
+        this.clientSocket.removeAllListeners();
     }
 }
 

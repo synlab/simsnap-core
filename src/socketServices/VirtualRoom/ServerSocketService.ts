@@ -48,7 +48,6 @@ export class ServerSocketService {
             
             ServerSocketService.Connection.on('connect', () => {
                 this.emit('connect', undefined)
-                
                 this.emit('clientSize', {
                     width: clientWidth,
                     height: clientHeight
@@ -63,12 +62,15 @@ export class ServerSocketService {
      */
     protected static LinkListener(){
         ServerSocketService.addEventListener("connect", ()=>console.log('🔌 Connected to server'));
-        ServerSocketService.addEventListener("clientSize", (event) => this.Connection.emit('clientSize', event));
+        ServerSocketService.addEventListener("clientSize", (event) => {this.Connection.emit('clientSize', event)});
         ServerSocketService.addEventListener("pointerPress", (event) => this.Connection.emit('devicePress', event));
         ServerSocketService.addEventListener("pointerMove", (event) => this.Connection.emit('deviceMove', event));
         ServerSocketService.addEventListener("pointerRelease", (event) => this.Connection.emit('deviceRelease', event));
         ServerSocketService.addEventListener("orientationChange", (event) => this.Connection.emit('deviceOrientationChange', event));
-        ServerSocketService.addEventListener("destroy", ()=> this.Connection.close());
+        ServerSocketService.addEventListener("destroy", ()=> {
+            this.Connection.removeAllListeners();
+            this.Connection.close();
+        });
     }
 }
 

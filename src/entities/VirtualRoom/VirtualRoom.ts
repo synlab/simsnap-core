@@ -21,7 +21,7 @@ export type VirtualRoomEvents = {
  * @param devices - the list of device to add to the room
  */
 export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
-    public dispatcher = new EventDispatcher<Events>();
+    private dispatcher = new EventDispatcher<Events>();
     
     private snapManager: SnapManager = new SnapManager(this);
     public devices: Device[] = [];

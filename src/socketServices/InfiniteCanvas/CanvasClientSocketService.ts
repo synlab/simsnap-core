@@ -18,13 +18,6 @@ export class CanvasClientSocketService extends ClientSocketService {
         override device: CanvasDevice = new CanvasDevice())
     {
         super(clientSocket, virtualRoom, device);
-    }
-
-    /**
-     * Link the different listener to the right ws emit message
-     * @virtual
-     */
-    protected override linkListener() {
         this.device.addEventListener('sceneUpdate', (sceneObjects: ViewBoxObject[])=>{
             this.clientSocket.emit('updateScene', sceneObjects);
         });
