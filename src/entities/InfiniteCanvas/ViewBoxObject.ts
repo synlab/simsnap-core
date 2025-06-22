@@ -31,6 +31,9 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
         preId: string = 'viewBoxObject',
         center?: {x: number, y: number},
     )
+        preId: string = 'viewBoxObject',
+        center?: {x: number, y: number},
+    )
     {
         this.id = new Id(preId);
         if (center) this.center = center;
