@@ -5,7 +5,7 @@ import Device from "./Device";
  *
  * @remarks value is 'center' | 'top' | 'bottom' | 'left' | 'right'
  */
-export enum Position{ 'center','top','bottom','left','right' }
+export enum Position{ center = 'center', top = 'top', bottom = 'bottom', left = 'left', right = 'right' }
 
 /**
  * class representing an unique identifier of any object (ID)

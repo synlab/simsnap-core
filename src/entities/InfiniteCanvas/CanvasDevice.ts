@@ -2,6 +2,7 @@ import { Device, DeviceEvents } from "../VirtualRoom/Device";
 import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
 import ViewBoxObject from "./ViewBoxObject";
 import { ViewBoxManager } from "./ViewBoxManager";
+import ViewBoxObject from "./ViewBoxObject";
 
 
 export type CanvasDeviceEvents = DeviceEvents & { 
@@ -80,6 +81,17 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
      */
     public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
         return ViewBoxManager.intersectViewBox(this, viewbox);
+    }
+
+    /**
+     * Return the projection of a ViewBoxObject on the device coordinate
+     * 
+     * @param viewbox - the ViewBoxObject to project
+     */
+    public getProjectedViewBox(viewbox: ViewBoxObject): ViewBoxObject {
+        const newViewbox = viewbox.copy();
+        if (newViewbox.pos && this.pos) newViewbox.pos = { x: newViewbox.pos.x - this.pos.x, y: newViewbox.pos.y - this.pos.y };
+        return newViewbox;
     }
 }
 

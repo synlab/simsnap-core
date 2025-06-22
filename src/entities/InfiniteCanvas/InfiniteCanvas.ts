@@ -46,19 +46,13 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
      */
 	updateSceneObjects() {
 		this.devices.forEach(device => {
-			const devicePos = device.pos;
-
-			if (!devicePos || !device.size) {
+			if (!device.pos || !device.size) {
 				return;
 			}
 			device.emit('sceneUpdate', 
 				this.sceneObjects
 					.filter(obj => device.isIntersectViewBox(obj))
-					.map(obj => {
-						const newObj = obj.copy();
-						newObj.pos && (newObj.pos = { x: newObj.pos.x - devicePos.x, y: newObj.pos.y - devicePos.y });
-						return newObj;
-					})
+					.map(obj =>  device.getProjectedViewBox(obj))
 			)
 		})
 	}
