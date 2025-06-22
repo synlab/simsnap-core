@@ -11,6 +11,14 @@ import { VirtualRoom } from "./VirtualRoom";
 export class SnapManager {
     constructor( private readonly virtualRoom: VirtualRoom ) { }
 
+    private colorCount = -0.5;
+    private colorsList = ['red', 'blue', 'green', 'magenta', 'yellow',  'cyan', 'orange', 'pink', 'lime', 'purple', 'brown'];
+
+    private get color(): string {
+        this.colorCount = (this.colorCount+0.5)%this.colorsList.length;
+        return this.colorsList[Math.floor(this.colorCount)];
+    }
+
     /** save the starting and ending event of the first touch if a multiple touch across the device is detected */
     private composedPress: { start: DeviceInteractionPointerEvent | null, end: DeviceInteractionPointerEvent | null } = { start: null, end: null };
     
@@ -67,8 +75,8 @@ export class SnapManager {
         const pos2 = this.positionOnViewPort(eventEnd2);
         if (pos1 && pos2) this.pairs.forEach(pair => {
             if (pos1.includes(pair[0]) && pos2.includes(pair[1])) {
-                eventEnd1.device.emit("snap", { device: eventEnd2.device, position: pair[0] });
-                eventEnd2.device.emit("snap",{ device: eventEnd1.device, position: pair[1] });
+                eventEnd1.device.emit("snap", { device: eventEnd2.device, position: pair[0], color: this.color });
+                eventEnd2.device.emit("snap",{ device: eventEnd1.device, position: pair[1], color: this.color });
                 this.virtualRoom.emit("snapDevices", { event1: eventEnd1, event2: eventEnd2 });
             }
         });

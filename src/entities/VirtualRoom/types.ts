@@ -81,5 +81,6 @@ export interface SnapDevicesEvent {
  */
 export interface SnapEvent {
     readonly device: Device,
-    readonly position: Position
+    readonly position: Position,
+    readonly color?: string,
 }

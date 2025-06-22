@@ -28,7 +28,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     currentPress: DeviceInteractionPointerEvent | null = null;
 
     /** The currents devices that are snap with this */
-    snapDevices: [Device, Position][] = [];
+    snapDevices: SnapEvent[] = [];
 
     constructor(
         public size?: { width: number; height: number; },
@@ -61,21 +61,19 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /**
      * Snap to the passed device
      *
-     * @param device - The device to snap with
-     * @param position - Position where the snap take place on the device screen
+     * @param snapeEvent - the event to handle
      */
     private handleSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices.push([snapeEvent.device, snapeEvent.position]);
+        this.snapDevices.push(snapeEvent);
     }
 
     /**
      * UnSnap the passed device
      *
-     * @param device - The device to unSnap
-     * @param position - Position where the unSnap take place on the device screen
+     * @param snapeEvent - the event to handle
      */
-    private handleUnSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices = this.snapDevices.filter(el => ! (el[0] === snapeEvent.device && el[1] === snapeEvent.position));
+    private handleUnSnapTo(snapeEvent: { device: Device, position: Position }) {
+        this.snapDevices = this.snapDevices.filter(event => ! (event.device === snapeEvent.device && event.position === snapeEvent.position));
     }
 
     /**

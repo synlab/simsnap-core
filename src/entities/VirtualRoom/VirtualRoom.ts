@@ -73,11 +73,11 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     private handleRemoveDevice(device: Device) {
         this.devices = this.devices.filter((el)=>el.id !== device.id);
         device.snapDevices.forEach(
-            ([snapedDevice])=>snapedDevice.snapDevices.forEach(([d, position]) => {
-                if (d.id.value === device.id.value) snapedDevice.emit("unSnap", {device: d, position})
+            ({ device: snapedDevice })=>snapedDevice.snapDevices.forEach((snapEvent) => {
+                if (snapEvent.device.id.value === device.id.value) snapedDevice.emit("unSnap", snapEvent)
             })
         )
-        device.snapDevices.forEach(([d, position])=>device.emit("unSnap", {device: d, position}))
+        device.snapDevices.forEach(snapEvent=>device.emit("unSnap", snapEvent))
     }
 
     /**
