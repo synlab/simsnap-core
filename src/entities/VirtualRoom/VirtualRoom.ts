@@ -1,4 +1,4 @@
-import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent } from "./types";
+import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, Position } from "./types";
 import { Device } from "../VirtualRoom/Device";
 import { removeItem } from "../Utils";
 import { SnapManager } from "./SnapManager";
@@ -44,7 +44,12 @@ export class VirtualRoom {
      */
     handleRemoveDevice(device: Device) {
         removeItem(this.devices, (el)=>el.id == device.id);
-        this.devices.forEach(device => device.snapDevices = device.snapDevices.filter(el => el[0] !== device));
+        device.snapDevices.forEach(
+            ([snapedDevice])=>snapedDevice.snapDevices.forEach(([d, position]) => {
+                if (d.id.value === device.id.value) snapedDevice.unSnapTo(d, position)
+            })
+        )
+        device.snapDevices.forEach(([d, position])=>device.unSnapTo(d, position))
         this.onRemoveDevice?.(device);
     }
 

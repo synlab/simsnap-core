@@ -33,17 +33,12 @@ export class InfiniteCanvas extends VirtualRoom {
      */
 	updateSceneObjects(device: CanvasDevice): ViewBoxObject[] {
 		this.onSceneUpdate?.();
-		const devicePos = device.pos;
-		if (!devicePos || !device.size) {
+		if (!device.pos || !device.size) {
 			return [];
 		}
 		return this.sceneObjects
 			.filter(obj => device.isIntersectViewBox(obj))
-			.map(obj => {
-				const newObj = obj.copy();
-				newObj.pos && (newObj.pos = { x: newObj.pos.x - devicePos.x, y: newObj.pos.y - devicePos.y });
-				return newObj;
-			});
+			.map(obj => device.getProjectedViewBox(obj));
 	}
 
 	
