@@ -92,6 +92,18 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         if (newViewbox.pos && this.pos) newViewbox.pos = { x: newViewbox.pos.x - this.pos.x, y: newViewbox.pos.y - this.pos.y };
         return newViewbox;
     }
+
+    /**
+     * Custom JSON serialisation for any transfert object
+     * @override
+     *
+     */
+    override toJSON(): object {
+        return {
+            pos: this.pos,
+            ...super.toJSON(),
+        }
+    }
 }
 
 export default CanvasDevice;

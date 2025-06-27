@@ -21,6 +21,20 @@ export class Object3D {
     {
         this.id = new Id(preId);
     }
+
+    /**
+     * Custom JSON serialisation for any transfert object
+     *
+     */
+    toJSON(): object {
+        return {
+            id: this.id.value,
+            pos: this.pos,
+            rotation: this.rotation,
+            scale: this.scale,
+            metaData: this.metaData
+        }
+    }
 }
 
 export default Object3D;

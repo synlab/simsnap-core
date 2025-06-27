@@ -52,6 +52,18 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     public emit = this.dispatcher.emit.bind(this.dispatcher);
     /*== ==================== ==*/
 
+    /**
+     * Custom JSON serialisation for any transfert object
+     *
+     */
+    toJSON(): object {
+        return {
+            id: this.id.value,
+            size: this.size,
+            metaData: this.metaData
+        }
+    }
+
 
     /*============================================================================================*/
     /*                                          handlers                                          */

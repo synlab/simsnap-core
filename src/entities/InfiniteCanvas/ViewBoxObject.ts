@@ -106,6 +106,19 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
         (newObj.id as {value: string}).value = this.id.value;
         return newObj;
     }
+
+    /**
+     * Custom JSON serialisation for any transfert object
+     *
+     */
+    toJSON(): object {
+        return {
+            id: this.id.value,
+            pos: this.pos,
+            size: this.size,
+            metaData: this.metaData
+        }
+    }
 }
 
 export default ViewBoxObject;
