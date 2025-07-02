@@ -9,7 +9,9 @@ import { VirtualRoom } from "./VirtualRoom";
  * @param virtualRoom - the calling virtualRoom
  */
 export class SnapManager {
-    constructor( private readonly virtualRoom: VirtualRoom ) { }
+    constructor( private readonly virtualRoom: VirtualRoom ) {
+        virtualRoom.addEventListener("deviceRelease", this.manageSnap.bind(this), 1);
+    }
 
     private colorCount = -0.5;
     private colorsList = ['red', 'blue', 'green', 'magenta', 'yellow',  'cyan', 'orange', 'pink', 'lime', 'purple', 'brown'];

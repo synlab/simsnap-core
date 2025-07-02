@@ -1,7 +1,7 @@
-import { distance } from "../Utils";
 import { VirtualRoom, VirtualRoomEvents } from "../VirtualRoom/VirtualRoom";
 import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
 import CanvasDevice from "./CanvasDevice";
+import { GrabPressManager } from "./GrabManager";
 import { ViewBoxObject } from "./ViewBoxObject";
 import { DeviceInteractionPointerEventOnCanvas } from "./types";
 
@@ -18,7 +18,8 @@ export type InfiniteCanvasEvents = VirtualRoomEvents & {
  * @param sceneObjects - the list of object to add to the scene
  */
 export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvasEvents> extends VirtualRoom<Events> {
-	
+	private grabPressManager: GrabPressManager;
+
 	private timeInterval: NodeJS.Timeout | undefined;
 
 	override devices: CanvasDevice[] = [];
@@ -31,10 +32,9 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
         this.addEventListener("devicePress", (event) => this.handlePointerTo(event, "devicePressOnCanvas"));
         this.addEventListener("deviceMove", (event) => this.handlePointerTo(event, "deviceMoveOnCanvas"), 1);
         this.addEventListener("deviceRelease", (event) => this.handlePointerTo(event, "deviceReleaseOnCanvas"), 1);
-		this.addEventListener("devicePressOnCanvas", this.handleDevicePressOnCanvas.bind(this));
-        this.addEventListener("deviceMoveOnCanvas", this.handleDeviceMoveOnCanvas.bind(this));
-        this.addEventListener("deviceReleaseOnCanvas", this.handleDeviceReleaseOnCanvas.bind(this));
 		this.addEventListener('destroy', this.handleDestroy.bind(this))
+
+		this.grabPressManager = new GrabPressManager(this);
 
 		this.timeInterval = setInterval(() => {
             this.updateSceneObjects();
@@ -73,47 +73,6 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 		const device = this.devices.find(d => d.id == event.device.id);
 		if (device?.pos && device.size) {
 			this.emit(eventType, new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y))
-		}
-	}
-
-	/**
-     * Handle a press pointer by a device on the Canvas
-	 * 
-	 * @param event - The event emit from the device
-     */
-	private handleDevicePressOnCanvas(event: DeviceInteractionPointerEventOnCanvas) {
-		const canvaPos = event.posCanvas;
-		canvaPos && this.sceneObjects.filter(el => el.isIntersect(canvaPos)).forEach(el => el.pressedBy.push(event.device.id));
-	}
-
-	/**
-     * Handle a move pointer by a device on the Canvas
-	 * @override
-	 * 
-	 * @param event - The event emit from the device
-     * 
-     * @see {@link VirtualRoom.handleDeviceMove}
-     */
-	private handleDeviceMoveOnCanvas(event: DeviceInteractionPointerEventOnCanvas) {
-		if (event.device.currentPress) {
-			this.sceneObjects.filter(obj => obj.pressedBy.includes(event.device.id)).forEach(obj => obj.emit('grab', event));
-		}
-	}
-
-	/**
-     * Handle a release pointer by a device on the Canvas
-	 * @override
-	 * 
-	 * @param event - The event emit from the device
-     * 
-     * @see {@link VirtualRoom.handleDeviceRelease}
-     */
-	private handleDeviceReleaseOnCanvas(event: DeviceInteractionPointerEventOnCanvas) {
-		if (event.device.currentPress) {
-			if (event.posCanvas && event.device.currentPress.posCanvas && distance(event.posCanvas, event.device.currentPress.posCanvas) < 10) {
-				this.sceneObjects.filter(el => el.pressedBy.includes(event.device.id)).forEach(el => el.emit('click', event))
-			}
-            this.sceneObjects.forEach(el => el.pressedBy = el.pressedBy.filter(id => id !== event.device.id));
 		}
 	}
 
