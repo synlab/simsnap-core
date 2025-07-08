@@ -26,7 +26,7 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
         this.virtualRoom.emit('addDevice', this.device);
         
         clientSocket.on('clientSize', (data: {width: number, height: number}) => {
-            this.handleClientSizeChange(data)
+            this.device.emit("sizeChanged", data);
         })
 
         clientSocket.on('devicePress', (data: {x: number, y: number}) => {
@@ -63,15 +63,6 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
     /*============================================================================================*/
     /*                                          handlers                                          */
     /*============================================================================================*/
-
-    /**
-     * Change the size of the current device instance
-     *
-     * @param data - The WebSocketTransmited data
-     */
-    private handleClientSizeChange(data: {width: number, height: number}) {
-        this.device.size = data;
-    }
 
     /**
      * Handle the destroy of the current object

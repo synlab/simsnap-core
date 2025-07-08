@@ -87,7 +87,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
      * 
      * @param viewbox - the ViewBoxObject to project
      */
-    public getProjectedViewBox(viewbox: ViewBoxObject): ViewBoxObject {
+    public getProjectedViewBox<VB extends ViewBoxObject>(viewbox: VB): VB {
         const newViewbox = viewbox.copy();
         if (newViewbox.pos && this.pos) newViewbox.pos = { x: newViewbox.pos.x - this.pos.x, y: newViewbox.pos.y - this.pos.y };
         return newViewbox;

@@ -3,11 +3,12 @@ import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from "./types"
 import { VirtualRoom } from "./VirtualRoom";
 
 export type DeviceEvents = {
-  pointerPress: DeviceInteractionPointerEvent;
-  pointerMove: DeviceInteractionPointerEvent;
-  pointerRelease: DeviceInteractionPointerEvent;
-  snap: SnapEvent;
-  unSnap: SnapEvent;
+    pointerPress: DeviceInteractionPointerEvent;
+    pointerMove: DeviceInteractionPointerEvent;
+    pointerRelease: DeviceInteractionPointerEvent;
+    sizeChanged: { width: number, height: number };
+    snap: SnapEvent;
+    unSnap: SnapEvent;
 };
 
 /**
@@ -43,6 +44,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.addEventListener("pointerPress", this.handlePress.bind(this));
         this.addEventListener("pointerMove", this.handleMove.bind(this));
         this.addEventListener("pointerRelease", this.handleRelease.bind(this));
+        this.addEventListener("sizeChanged", this.handleSizeChanged.bind(this));
         /*== ====================== ==*/
     }
 
@@ -91,7 +93,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /**
      * Handle a press pointer by a device
      *
-     * @param event - The device to unSnap
+     * @param event - The pointer event
      * 
      * @remarks
      * This method should be call by {@link VirtualRoom.handleDevicePress}
@@ -103,7 +105,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /**
      * Handle a move pointer by a device
      *
-     * @param event - The device to unSnap
+     * @param event - The pointer event
      * 
      * @remarks
      * This method should be call by {@link VirtualRoom.handleDevicePress}
@@ -115,7 +117,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /**
      * Handle a release pointer by a device
      *
-     * @param event - The device to unSnap
+     * @param event - The pointer event
      * 
      * @remarks
      * This method should be call by {@link VirtualRoom.handleDevicePress}
@@ -123,6 +125,18 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     private handleRelease(event: DeviceInteractionPointerEvent){
         this.currentPressStart = null;
         this.currentPress = null;
+    }
+
+    /**
+     * Handle a size change of a device
+     *
+     * @param newSize - The device new size
+     * 
+     * @remarks
+     * This method should be call by {@link VirtualRoom.handleDevicePress}
+     */
+    private handleSizeChanged(newSize: { width: number, height: number }){
+        this.size = newSize;
     }
 }
 

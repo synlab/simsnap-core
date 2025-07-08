@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import ClientSocketService from "../VirtualRoom/ClientSocketService";
+import ClientSocketService, { ClientSocketServiceEvents } from "../VirtualRoom/ClientSocketService";
 import { InfiniteCanvas } from "../../entities/InfiniteCanvas/InfiniteCanvas";
 import CanvasDevice from "../../entities/InfiniteCanvas/CanvasDevice";
 import ViewBoxObject from "../../entities/InfiniteCanvas/ViewBoxObject";
@@ -11,7 +11,7 @@ import ViewBoxObject from "../../entities/InfiniteCanvas/ViewBoxObject";
  * @param virtualRoom - the object representation of the InfiniteCanvas virtual room
  * @param device - the device representative object attribuated to the client
  */
-export class CanvasClientSocketService extends ClientSocketService {
+export class CanvasClientSocketService<Events extends ClientSocketServiceEvents = ClientSocketServiceEvents> extends ClientSocketService<Events> {
     constructor(
         clientSocket: Socket,
         override virtualRoom: InfiniteCanvas,

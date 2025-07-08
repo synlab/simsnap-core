@@ -4,6 +4,8 @@ export { VirtualRoom } from './src/entities/VirtualRoom/VirtualRoom'
 export { Device } from './src/entities/VirtualRoom/Device'
 export * from './src/entities/VirtualRoom/types'
 
+export { ServerMultiRoom } from './src/socketServices/VirtualRoom/ServerMultiRoom'
+export { RoomSocketService } from './src/socketServices/VirtualRoom/RoomSocketService'
 export { ClientSocketService } from './src/socketServices/VirtualRoom/ClientSocketService'
 export { ServerSocketService } from './src/socketServices/VirtualRoom/ServerSocketService'
 

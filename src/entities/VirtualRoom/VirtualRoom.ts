@@ -1,4 +1,4 @@
-import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, SnapDevicesEvent } from "./types";
+import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, Id, SnapDevicesEvent } from "./types";
 import { Device, DeviceEvents } from "../VirtualRoom/Device";
 import { SnapManager } from "./SnapManager";
 import { EventDispatcher } from "./EventDispatcher";
@@ -21,6 +21,7 @@ export type VirtualRoomEvents = {
  * @param devices - the list of device to add to the room
  */
 export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
+    readonly id = new Id("virtualRoom");
     private dispatcher = new EventDispatcher<Events>();
     private snapManager: SnapManager;
     
@@ -74,12 +75,6 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
      */
     private handleRemoveDevice(device: Device) {
         this.devices = this.devices.filter((el)=>el.id !== device.id);
-        device.snapDevices.forEach(
-            ({ device: snapedDevice })=>snapedDevice.snapDevices.forEach((snapEvent) => {
-                if (snapEvent.device.id.value === device.id.value) snapedDevice.emit("unSnap", snapEvent)
-            })
-        )
-        device.snapDevices.forEach(snapEvent=>device.emit("unSnap", snapEvent))
     }
 
     /**

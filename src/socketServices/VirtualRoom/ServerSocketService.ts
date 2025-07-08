@@ -40,11 +40,11 @@ export class ServerSocketService {
      * @param clientHeight - the height of the device
      * @param https - the http protocole to use (default to http)
      */
-    static InitConnection(ip = 'localhost', port = 4000, clientWidth: number, clientHeight: number, https = false) {
+    static InitConnection(roomCode: string, ip = 'localhost', port = 4000, clientWidth: number, clientHeight: number, https = false) {
         if (!ServerSocketService.Connection) {
             this.LinkListener();
-            ServerSocketService.Connection = io(`${https ? 'https' : 'http'}://${ip}:${port}`, { ...(https ? { secure: true } : {})});
-            console.log(`🔌 Connecting to server at ${https ? 'https' : 'http'}://${ip}:${port}`);
+            ServerSocketService.Connection = io(`${https ? 'https' : 'http'}://${ip}:${port}?room=${roomCode}`, { ...(https ? { secure: true } : {})});
+            console.log(`🔌 Connecting to server at ${https ? 'https' : 'http'}://${ip}:${port}?room=${roomCode}`);
             
             ServerSocketService.Connection.on('connect', () => {
                 this.emit('connect', undefined)

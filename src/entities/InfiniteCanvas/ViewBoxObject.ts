@@ -100,11 +100,8 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
      * @remarks
      * the id is copied
      */
-    copy(): ViewBoxObject<Events> {
-        const newObj = new ViewBoxObject<Events>(structuredClone(this.pos), structuredClone(this.size), this.metaData)
-        newObj.pressedBy = structuredClone(this.pressedBy);
-        (newObj.id as {value: string}).value = this.id.value;
-        return newObj;
+    copy(): this {
+        return structuredClone({...this, dispatcher: undefined, addEventListener: undefined, removeEventListener: undefined, emit: undefined});
     }
 
     /**
