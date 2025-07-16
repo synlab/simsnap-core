@@ -108,7 +108,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      * @param event - The pointer event
      * 
      * @remarks
-     * This method should be call by {@link VirtualRoom.handleDevicePress}
+     * This method should be call by {@link VirtualRoom.handleDeviceMove}
      */
     private handleMove(event: DeviceInteractionPointerEvent) {
         if (this.currentPress) this.currentPress = event;
@@ -120,7 +120,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      * @param event - The pointer event
      * 
      * @remarks
-     * This method should be call by {@link VirtualRoom.handleDevicePress}
+     * This method should be call by {@link VirtualRoom.handleDeviceRelease}
      */
     private handleRelease(event: DeviceInteractionPointerEvent){
         this.currentPressStart = null;
@@ -132,10 +132,8 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      *
      * @param newSize - The device new size
      * 
-     * @remarks
-     * This method should be call by {@link VirtualRoom.handleDevicePress}
      */
-    private handleSizeChanged(newSize: { width: number, height: number }){
+    protected handleSizeChanged(newSize: { width: number, height: number }){
         this.size = newSize;
     }
 }

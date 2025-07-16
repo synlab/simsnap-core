@@ -54,6 +54,19 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
     set center(point: { x: number, y: number }) {
         ViewBoxManager.setCenter(point, this)
     }
+
+    /**
+     * Handle a size change of a device
+     * @override
+     *
+     * @param newSize - The device new size
+     * 
+     */
+    override handleSizeChanged(newSize: { width: number, height: number }){
+        const oldCenter = this.center;
+        super.handleSizeChanged(newSize);
+        if (oldCenter) this.center = oldCenter;
+    }
         
 
     /**
