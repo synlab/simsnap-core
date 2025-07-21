@@ -97,6 +97,12 @@ export class SnapManager {
                 const event2 = { ...eventStart2, snapDevice: eventStart1.device, position: pair[1] };
                 eventStart1.device.emit("unSnap", event1);
                 eventStart2.device.emit("unSnap", event2);
+                if (eventStart1.device.anchorPriority !== null && eventStart2.device.anchorPriority !== null ) {
+                    (eventStart1.device.anchorPriority < eventStart2.device.anchorPriority ?
+                        eventStart1.device :
+                        eventStart2.device
+                    ).anchorPriority = null;
+                }
                 this.virtualRoom.emit("unSnapDevices", { event1, event2 });
             }
         });

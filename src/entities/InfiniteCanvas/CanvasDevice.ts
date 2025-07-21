@@ -26,9 +26,10 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         public pos?: {x: number, y: number},
         size?: {width: number, height: number},
         metaData?: Record<string, any>,
+        anchorPriority: number | null = null,
         preId: string = 'canvaDevice'
     ) {
-        super(size, metaData, preId);
+        super(size, metaData, anchorPriority, preId);
     }
 
     /**

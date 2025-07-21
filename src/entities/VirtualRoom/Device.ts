@@ -7,6 +7,7 @@ export type DeviceEvents = {
     pointerMove: DeviceInteractionPointerEvent;
     pointerRelease: DeviceInteractionPointerEvent;
     sizeChanged: { width: number, height: number };
+    anchorPriorityChanged: number;
     snap: SnapEvent;
     unSnap: SnapEvent;
 };
@@ -34,6 +35,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     constructor(
         public size?: { width: number; height: number; },
         public metaData?: Record<string, any>,
+        public anchorPriority: number | null = null,
         preId: string = 'device',
     ) {
         this.id = new Id(preId);
@@ -45,6 +47,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.addEventListener("pointerMove", this.handleMove.bind(this));
         this.addEventListener("pointerRelease", this.handleRelease.bind(this));
         this.addEventListener("sizeChanged", this.handleSizeChanged.bind(this));
+        this.addEventListener("anchorPriorityChanged", this.handleAnchorPriorityChanged.bind(this));
         /*== ====================== ==*/
     }
 
@@ -135,6 +138,16 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      */
     protected handleSizeChanged(newSize: { width: number, height: number }){
         this.size = newSize;
+    }
+
+    /**
+     * Handle a anchor priority change of a device
+     *
+     * @param newAnchorPriority - The new acnhor priority
+     * 
+     */
+    protected handleAnchorPriorityChanged(newAnchorPriority: number){
+        this.anchorPriority = newAnchorPriority;
     }
 }
 
