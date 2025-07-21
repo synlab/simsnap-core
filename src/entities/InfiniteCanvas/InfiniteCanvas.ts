@@ -1,9 +1,9 @@
-import { VirtualRoom, VirtualRoomEvents } from "../VirtualRoom/VirtualRoom";
-import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
-import CanvasDevice from "./CanvasDevice";
-import { GrabPressManager } from "./GrabManager";
-import { ViewBoxObject } from "./ViewBoxObject";
-import { DeviceInteractionPointerEventOnCanvas } from "./types";
+import { VirtualRoom, VirtualRoomEvents } from '../VirtualRoom/VirtualRoom';
+import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
+import CanvasDevice from './CanvasDevice';
+import { GrabPressManager } from './GrabManager';
+import { ViewBoxObject } from './ViewBoxObject';
+import { DeviceInteractionPointerEventOnCanvas } from './types';
 
 export type InfiniteCanvasEvents = VirtualRoomEvents & { 
 	devicePressOnCanvas: DeviceInteractionPointerEventOnCanvas;
@@ -26,19 +26,19 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 
 	constructor(
 		devices: CanvasDevice[] = [],
-		public sceneObjects: ViewBoxObject[] = []
+		public sceneObjects: ViewBoxObject[] = [],
 	) {
-		super(devices)
-        this.addEventListener("devicePress", (event) => this.handlePointerTo(event, "devicePressOnCanvas"));
-        this.addEventListener("deviceMove", (event) => this.handlePointerTo(event, "deviceMoveOnCanvas"), 1);
-        this.addEventListener("deviceRelease", (event) => this.handlePointerTo(event, "deviceReleaseOnCanvas"), 1);
-		this.addEventListener('destroy', this.handleDestroy.bind(this))
+		super(devices);
+        this.addEventListener('devicePress', (event) => this.handlePointerTo(event, 'devicePressOnCanvas'));
+        this.addEventListener('deviceMove', (event) => this.handlePointerTo(event, 'deviceMoveOnCanvas'), 1);
+        this.addEventListener('deviceRelease', (event) => this.handlePointerTo(event, 'deviceReleaseOnCanvas'), 1);
+		this.addEventListener('destroy', this.handleDestroy.bind(this));
 
 		this.grabPressManager = new GrabPressManager(this);
 
 		this.timeInterval = setInterval(() => {
             this.updateSceneObjects();
-        }, 50)
+        }, 50);
 	}
 
 	/**
@@ -52,9 +52,9 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 			device.emit('sceneUpdate', 
 				this.sceneObjects
 					.filter(obj => device.isIntersectViewBox(obj))
-					.map(obj =>  device.getProjectedViewBox(obj))
-			)
-		})
+					.map(obj =>  device.getProjectedViewBox(obj)),
+			);
+		});
 	}
 
 	
@@ -69,10 +69,10 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 	 * @param event - The event emit from the device
 	 * @param eventType - The event type to transfert
      */
-	private handlePointerTo(event: DeviceInteractionPointerEvent, eventType: "devicePressOnCanvas" | "deviceMoveOnCanvas" | "deviceReleaseOnCanvas") {
+	private handlePointerTo(event: DeviceInteractionPointerEvent, eventType: 'devicePressOnCanvas' | 'deviceMoveOnCanvas' | 'deviceReleaseOnCanvas') {
 		const device = this.devices.find(d => d.id == event.device.id);
 		if (device?.pos && device.size) {
-			this.emit(eventType, new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y))
+			this.emit(eventType, new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y));
 		}
 	}
 

@@ -1,7 +1,7 @@
-import { Device, DeviceEvents } from "../VirtualRoom/Device";
-import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
-import { ViewBoxManager } from "./ViewBoxManager";
-import ViewBoxObject from "./ViewBoxObject";
+import { Device, DeviceEvents } from '../VirtualRoom/Device';
+import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from './types';
+import { ViewBoxManager } from './ViewBoxManager';
+import ViewBoxObject from './ViewBoxObject';
 
 
 export type CanvasDeviceEvents = DeviceEvents & { 
@@ -27,7 +27,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         size?: {width: number, height: number},
         metaData?: Record<string, any>,
         anchorPriority: number | null = null,
-        preId: string = 'canvaDevice'
+        preId: string = 'canvaDevice',
     ) {
         super(size, metaData, anchorPriority, preId);
     }
@@ -53,7 +53,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
      * @see {@link ViewBoxManager.setCenter}
      */
     set center(point: { x: number, y: number }) {
-        ViewBoxManager.setCenter(point, this)
+        ViewBoxManager.setCenter(point, this);
     }
 
     /**
@@ -116,7 +116,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         return {
             pos: this.pos,
             ...super.toJSON(),
-        }
+        };
     }
 }
 

@@ -1,4 +1,4 @@
-import { io, Socket } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client';
 import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 
 export type ClientSocketServiceEvents = {
@@ -43,15 +43,15 @@ export class ServerSocketService {
     static InitConnection(roomCode: string, ip = 'localhost', port = 4000, clientWidth: number, clientHeight: number, https = false) {
         if (!ServerSocketService.Connection) {
             this.LinkListener();
-            ServerSocketService.Connection = io(`${https ? 'https' : 'http'}://${ip}:${port}?room=${roomCode}`, { ...(https ? { secure: true } : {})});
+            ServerSocketService.Connection = io(`${https ? 'https' : 'http'}://${ip}:${port}?room=${roomCode}`, { ...(https ? { secure: true } : {}) });
             console.log(`🔌 Connecting to server at ${https ? 'https' : 'http'}://${ip}:${port}?room=${roomCode}`);
             
             ServerSocketService.Connection.on('connect', () => {
-                this.emit('connect', undefined)
+                this.emit('connect', undefined);
                 this.emit('clientSize', {
                     width: clientWidth,
-                    height: clientHeight
-                })
+                    height: clientHeight,
+                });
             });
         }
     }
@@ -61,13 +61,13 @@ export class ServerSocketService {
      * @virtual
      */
     protected static LinkListener(){
-        ServerSocketService.addEventListener("connect", ()=>console.log('🔌 Connected to server'));
-        ServerSocketService.addEventListener("clientSize", (event) => {this.Connection.emit('clientSize', event)});
-        ServerSocketService.addEventListener("pointerPress", (event) => this.Connection.emit('devicePress', event));
-        ServerSocketService.addEventListener("pointerMove", (event) => this.Connection.emit('deviceMove', event));
-        ServerSocketService.addEventListener("pointerRelease", (event) => this.Connection.emit('deviceRelease', event));
-        ServerSocketService.addEventListener("orientationChange", (event) => this.Connection.emit('deviceOrientationChange', event));
-        ServerSocketService.addEventListener("destroy", ()=> {
+        ServerSocketService.addEventListener('connect', () => console.log('🔌 Connected to server'));
+        ServerSocketService.addEventListener('clientSize', (event) => {this.Connection.emit('clientSize', event);});
+        ServerSocketService.addEventListener('pointerPress', (event) => this.Connection.emit('devicePress', event));
+        ServerSocketService.addEventListener('pointerMove', (event) => this.Connection.emit('deviceMove', event));
+        ServerSocketService.addEventListener('pointerRelease', (event) => this.Connection.emit('deviceRelease', event));
+        ServerSocketService.addEventListener('orientationChange', (event) => this.Connection.emit('deviceOrientationChange', event));
+        ServerSocketService.addEventListener('destroy', () => {
             this.Connection.removeAllListeners();
             this.Connection.close();
         });

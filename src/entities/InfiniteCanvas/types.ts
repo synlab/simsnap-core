@@ -1,5 +1,5 @@
-import { DeviceInteractionPointerEvent } from "../VirtualRoom/types";
-import CanvasDevice from "./CanvasDevice";
+import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
+import CanvasDevice from './CanvasDevice';
 
 /**
  * Represent an entity having a viewBox

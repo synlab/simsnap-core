@@ -1,6 +1,6 @@
-import { EventDispatcher } from "./EventDispatcher";
-import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from "./types";
-import { VirtualRoom } from "./VirtualRoom";
+import { EventDispatcher } from './EventDispatcher';
+import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from './types';
+import { VirtualRoom } from './VirtualRoom';
 
 export type DeviceEvents = {
     pointerPress: DeviceInteractionPointerEvent;
@@ -41,13 +41,13 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.id = new Id(preId);
 
         /*== Link internal handlers ==*/
-        this.addEventListener("snap", this.handleSnapTo.bind(this));
-        this.addEventListener("unSnap", this.handleUnSnapTo.bind(this));
-        this.addEventListener("pointerPress", this.handlePress.bind(this));
-        this.addEventListener("pointerMove", this.handleMove.bind(this));
-        this.addEventListener("pointerRelease", this.handleRelease.bind(this));
-        this.addEventListener("sizeChanged", this.handleSizeChanged.bind(this));
-        this.addEventListener("anchorPriorityChanged", this.handleAnchorPriorityChanged.bind(this));
+        this.addEventListener('snap', this.handleSnapTo.bind(this));
+        this.addEventListener('unSnap', this.handleUnSnapTo.bind(this));
+        this.addEventListener('pointerPress', this.handlePress.bind(this));
+        this.addEventListener('pointerMove', this.handleMove.bind(this));
+        this.addEventListener('pointerRelease', this.handleRelease.bind(this));
+        this.addEventListener('sizeChanged', this.handleSizeChanged.bind(this));
+        this.addEventListener('anchorPriorityChanged', this.handleAnchorPriorityChanged.bind(this));
         /*== ====================== ==*/
     }
 
@@ -65,8 +65,8 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         return {
             id: this.id.value,
             size: this.size,
-            metaData: this.metaData
-        }
+            metaData: this.metaData,
+        };
     }
 
 

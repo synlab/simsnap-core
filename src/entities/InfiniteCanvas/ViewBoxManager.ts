@@ -1,4 +1,4 @@
-import { ViewBoxEntity } from "./types";
+import { ViewBoxEntity } from './types';
 
 /**
  * Handle the viewbox casual action
@@ -17,7 +17,7 @@ export class ViewBoxManager{
         return {
             x: viewBoxEntity.pos.x + viewBoxEntity.size.width / 2,
             y: viewBoxEntity.pos.y + viewBoxEntity.size.height / 2,
-        }
+        };
     }
 
     /**
@@ -33,7 +33,7 @@ export class ViewBoxManager{
             viewBoxEntity.pos = {
                 x: point.x - viewBoxEntity.size.width / 2,
                 y: point.y - viewBoxEntity.size.height / 2,
-            }
+            };
         }
     }
 

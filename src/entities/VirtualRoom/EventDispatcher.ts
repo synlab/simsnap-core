@@ -11,7 +11,7 @@ export class EventDispatcher<Events extends Record<string, any>> {
   addEventListener<K extends keyof Events>(
     type: K,
     callback: (event: Events[K]) => void,
-    priority = 0
+    priority = 0,
   ): void {
     const list = this.listeners[type] ?? [];
     list.push({ callback, priority });
@@ -21,7 +21,7 @@ export class EventDispatcher<Events extends Record<string, any>> {
 
   removeEventListener<K extends keyof Events>(
     type: K,
-    callback: (payload: Events[K]) => void
+    callback: (payload: Events[K]) => void,
   ): void {
     const list = this.listeners[type];
     if (!list) return;
@@ -31,6 +31,6 @@ export class EventDispatcher<Events extends Record<string, any>> {
   emit<K extends keyof Events>(type: K, event: Events[K]): void {
     const list = this.listeners[type];
     if (!list) return;
-    list.forEach(({callback})=>callback(event));
+    list.forEach(({ callback }) => callback(event));
   }
 }

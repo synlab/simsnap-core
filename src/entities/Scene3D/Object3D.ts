@@ -1,4 +1,4 @@
-import { Id } from "../VirtualRoom/types";
+import { Id } from '../VirtualRoom/types';
 
 /**
  * Representation of a 3D obejct in a 3D context
@@ -17,7 +17,7 @@ export class Object3D {
         public rotation: {x: number, y: number, z: number},
         public scale: {x: number, y: number, z: number},
         public metaData?: Record<string, any>,
-        preId: string = 'Object3D',)
+        preId: string = 'Object3D')
     {
         this.id = new Id(preId);
     }
@@ -32,8 +32,8 @@ export class Object3D {
             pos: this.pos,
             rotation: this.rotation,
             scale: this.scale,
-            metaData: this.metaData
-        }
+            metaData: this.metaData,
+        };
     }
 }
 

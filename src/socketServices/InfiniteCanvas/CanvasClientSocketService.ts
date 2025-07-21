@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
-import ClientSocketService, { ClientSocketServiceEvents } from "../VirtualRoom/ClientSocketService";
-import { InfiniteCanvas } from "../../entities/InfiniteCanvas/InfiniteCanvas";
-import CanvasDevice from "../../entities/InfiniteCanvas/CanvasDevice";
-import ViewBoxObject from "../../entities/InfiniteCanvas/ViewBoxObject";
+import { Socket } from 'socket.io';
+import ClientSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ClientSocketService';
+import { InfiniteCanvas } from '../../entities/InfiniteCanvas/InfiniteCanvas';
+import CanvasDevice from '../../entities/InfiniteCanvas/CanvasDevice';
+import ViewBoxObject from '../../entities/InfiniteCanvas/ViewBoxObject';
 
 /**
  * WebSocket service for using a InfiniteCanvas virtualRoom from the server side
@@ -18,7 +18,7 @@ export class CanvasClientSocketService<Events extends ClientSocketServiceEvents 
         override device: CanvasDevice = new CanvasDevice())
     {
         super(clientSocket, virtualRoom, device);
-        this.device.addEventListener('sceneUpdate', (sceneObjects: ViewBoxObject[])=>{
+        this.device.addEventListener('sceneUpdate', (sceneObjects: ViewBoxObject[]) => {
             this.clientSocket.emit('updateScene', sceneObjects);
         });
     }

@@ -1,7 +1,7 @@
-import { EventDispatcher } from "../VirtualRoom/EventDispatcher";
-import { DeviceInteractionPointerEvent, Id } from "../VirtualRoom/types";
-import { ViewBoxEntity } from "./types";
-import { ViewBoxManager } from "./ViewBoxManager";
+import { EventDispatcher } from '../VirtualRoom/EventDispatcher';
+import { DeviceInteractionPointerEvent, Id } from '../VirtualRoom/types';
+import { ViewBoxEntity } from './types';
+import { ViewBoxManager } from './ViewBoxManager';
 
 export type ViewBoxObjectEvents = { 
     click: DeviceInteractionPointerEvent,
@@ -57,7 +57,7 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
      * @see {@link ViewBoxManager.setCenter}
      */
     set center(point: { x: number, y: number }) {
-        ViewBoxManager.setCenter(point, this)
+        ViewBoxManager.setCenter(point, this);
     }
 
     /**
@@ -101,7 +101,7 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
      * the id is copied
      */
     copy(): this {
-        return structuredClone({...this, dispatcher: undefined, addEventListener: undefined, removeEventListener: undefined, emit: undefined, pressedBy: undefined});
+        return structuredClone({ ...this, dispatcher: undefined, addEventListener: undefined, removeEventListener: undefined, emit: undefined, pressedBy: undefined });
     }
 
     /**
@@ -113,8 +113,8 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
             id: this.id.value,
             pos: this.pos,
             size: this.size,
-            metaData: this.metaData
-        }
+            metaData: this.metaData,
+        };
     }
 }
 

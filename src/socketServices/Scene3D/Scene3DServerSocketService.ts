@@ -27,10 +27,10 @@ export class Scene3DServerSocketService extends ServerSocketService {
      */
     protected static override LinkListener(){
         super.LinkListener();
-        this.addEventListener("connect", ()=>{
+        this.addEventListener('connect', () => {
             ServerSocketService.Connection.on('updateScene', (data: Object3D[]) => {
-                this.emit("sceneUpdate", data)
-            })
+                this.emit('sceneUpdate', data);
+            });
         });
     }
 }

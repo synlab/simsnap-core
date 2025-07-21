@@ -1,7 +1,7 @@
-import { Server, Socket } from "socket.io";
-import { VirtualRoom } from "../../entities/VirtualRoom/VirtualRoom";
-import { EventDispatcher } from "../../entities/VirtualRoom/EventDispatcher";
-import ClientSocketService from "./ClientSocketService";
+import { Server, Socket } from 'socket.io';
+import { VirtualRoom } from '../../entities/VirtualRoom/VirtualRoom';
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
+import ClientSocketService from './ClientSocketService';
 
 export type RoomSocketServiceEvents = {
   destroy: undefined;
@@ -21,9 +21,9 @@ export class RoomSocketService<Client extends ClientSocketService = ClientSocket
         protected roomCode: string,
         protected ioServer: Server,
         public virtualRoom: VirtualRoom = new VirtualRoom(),
-        public clientFactory: (clientSocket: Socket) => Client
+        public clientFactory: (clientSocket: Socket) => Client,
     ) {
-        this.addEventListener('destroy', this.destroy.bind(this))
+        this.addEventListener('destroy', this.destroy.bind(this));
     }
 
     /*== Dispatcher deleguate ==*/
@@ -33,7 +33,7 @@ export class RoomSocketService<Client extends ClientSocketService = ClientSocket
     /*== ==================== ==*/
     
     get ioRoom(){
-        return this.ioServer.to(this.roomCode)
+        return this.ioServer.to(this.roomCode);
     }
 
     addNewClient(clientSocket: Socket): Client {
@@ -50,7 +50,7 @@ export class RoomSocketService<Client extends ClientSocketService = ClientSocket
      * Handle the destroy of the current object
      */
     private destroy() {
-        this.virtualRoom.emit("destroy", undefined);
+        this.virtualRoom.emit('destroy', undefined);
         // this.ioRoom.disconnectSockets();
     }
 }

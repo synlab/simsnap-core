@@ -27,10 +27,10 @@ export class CanvasServerSocketService extends ServerSocketService {
      */
     protected static override LinkListener(){
         super.LinkListener();
-        this.addEventListener("connect", ()=>{
+        this.addEventListener('connect', () => {
             ServerSocketService.Connection.on('updateScene', (data: ViewBoxObject[]) => {
-                this.emit("sceneUpdate", data)
-            })
+                this.emit('sceneUpdate', data);
+            });
         });
     }
 }

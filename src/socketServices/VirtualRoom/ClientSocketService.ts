@@ -1,7 +1,7 @@
-import { Socket } from "socket.io";
-import { Device } from "../../entities/VirtualRoom/Device";
-import { VirtualRoom } from "../../entities/VirtualRoom/VirtualRoom";
-import { EventDispatcher } from "../../entities/VirtualRoom/EventDispatcher";
+import { Socket } from 'socket.io';
+import { Device } from '../../entities/VirtualRoom/Device';
+import { VirtualRoom } from '../../entities/VirtualRoom/VirtualRoom';
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 
 export type ClientSocketServiceEvents = {
   destroy: undefined;
@@ -20,38 +20,38 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
     constructor(
         public readonly clientSocket: Socket,
         public virtualRoom: VirtualRoom,
-        public device: Device = new Device()
+        public device: Device = new Device(),
     ) {
-        console.log('✅ New client connected')
+        console.log('✅ New client connected');
         this.virtualRoom.emit('addDevice', this.device);
         
         clientSocket.on('clientSize', (data: {width: number, height: number}) => {
-            this.device.emit("sizeChanged", data);
-        })
+            this.device.emit('sizeChanged', data);
+        });
 
         clientSocket.on('devicePress', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('devicePress', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('devicePress', { device: this.device, ...data });
+        });
     
         clientSocket.on('deviceMove', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('deviceMove', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('deviceMove', { device: this.device, ...data });
+        });
 
         clientSocket.on('deviceRelease', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('deviceRelease', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('deviceRelease', { device: this.device, ...data });
+        });
 
         clientSocket.on('deviceOrientationChange', (data: {alpha: number, beta: number, gamma: number}) => {
-            this.virtualRoom.emit('deviceOrientationChange', {device: this.device, ...data})
-        })
+            this.virtualRoom.emit('deviceOrientationChange', { device: this.device, ...data });
+        });
     
         clientSocket.on('disconnect', () => {
             this.virtualRoom.emit('removeDevice', this.device);
             this.emit('destroy', undefined);
-            console.log('❌ Client disconnected')
-        })
+            console.log('❌ Client disconnected');
+        });
 
-        this.addEventListener('destroy', this.destroy.bind(this))
+        this.addEventListener('destroy', this.destroy.bind(this));
     }
 
     /*== Dispatcher deleguate ==*/

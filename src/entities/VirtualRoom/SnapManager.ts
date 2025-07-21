@@ -1,7 +1,7 @@
-import { distance } from "../Utils";
-import Device from "./Device";
-import { Position, DeviceInteractionPointerEvent } from "./types";
-import { VirtualRoom } from "./VirtualRoom";
+import { distance } from '../Utils';
+import Device from './Device';
+import { Position, DeviceInteractionPointerEvent } from './types';
+import { VirtualRoom } from './VirtualRoom';
 
 /**
  * Handle the snapping management for virtualRoom
@@ -11,8 +11,8 @@ import { VirtualRoom } from "./VirtualRoom";
  */
 export class SnapManager {
     constructor( private readonly virtualRoom: VirtualRoom ) {
-        virtualRoom.addEventListener("deviceRelease", this.manageSnap.bind(this), 1);
-        virtualRoom.addEventListener("removeDevice", this.unSnapDisconnectedDevice.bind(this), 1);
+        virtualRoom.addEventListener('deviceRelease', this.manageSnap.bind(this), 1);
+        virtualRoom.addEventListener('removeDevice', this.unSnapDisconnectedDevice.bind(this), 1);
     }
 
     private colorCount = -0.5;
@@ -49,7 +49,7 @@ export class SnapManager {
         } else if (this.virtualRoom.devices.filter(device => device !== event.device).some(device => device.currentPress)) {
         // else if a multi touch is detected 
 
-            this.composedPress.start = event.device.currentPressStart
+            this.composedPress.start = event.device.currentPressStart;
             this.composedPress.end = event;
         } else {
         // else reset multi touch
@@ -71,7 +71,6 @@ export class SnapManager {
         if (position.length === 0) return null;
         return position;
     };
-
     
 
     private checkSnapDevices(eventEnd1: DeviceInteractionPointerEvent, eventEnd2: DeviceInteractionPointerEvent) {
@@ -81,9 +80,9 @@ export class SnapManager {
             if (pos1.includes(pair[0]) && pos2.includes(pair[1])) {
                 const event1 = { ...eventEnd1, snapDevice: eventEnd2.device, position: pair[0], color: this.color };
                 const event2 = { ...eventEnd2, snapDevice: eventEnd1.device, position: pair[1], color: this.color };
-                eventEnd1.device.emit("snap", event1);
-                eventEnd2.device.emit("snap", event2);
-                this.virtualRoom.emit("snapDevices", { event1, event2 });
+                eventEnd1.device.emit('snap', event1);
+                eventEnd2.device.emit('snap', event2);
+                this.virtualRoom.emit('snapDevices', { event1, event2 });
             }
         });
     }
@@ -95,31 +94,31 @@ export class SnapManager {
             if (pos1.includes(pair[0]) && pos2.includes(pair[1])) {
                 const event1 = { ...eventStart1, snapDevice: eventStart2.device, position: pair[0] };
                 const event2 = { ...eventStart2, snapDevice: eventStart1.device, position: pair[1] };
-                eventStart1.device.emit("unSnap", event1);
-                eventStart2.device.emit("unSnap", event2);
+                eventStart1.device.emit('unSnap', event1);
+                eventStart2.device.emit('unSnap', event2);
                 if (eventStart1.device.anchorPriority !== null && eventStart2.device.anchorPriority !== null ) {
                     (eventStart1.device.anchorPriority < eventStart2.device.anchorPriority ?
                         eventStart1.device :
                         eventStart2.device
                     ).anchorPriority = null;
                 }
-                this.virtualRoom.emit("unSnapDevices", { event1, event2 });
+                this.virtualRoom.emit('unSnapDevices', { event1, event2 });
             }
         });
     }
 
     private unSnapDisconnectedDevice(device: Device) {
-        device.snapDevices.forEach((snapEventOut)=>{
-            const snapEventIn = snapEventOut.snapDevice.snapDevices.find(({snapDevice})=>snapDevice.id.value == snapEventOut.device.id.value)
+        device.snapDevices.forEach((snapEventOut) => {
+            const snapEventIn = snapEventOut.snapDevice.snapDevices.find(({ snapDevice }) => snapDevice.id.value == snapEventOut.device.id.value);
             
-            snapEventIn?.device.emit("unSnap", {...snapEventIn, color: undefined});
-            snapEventOut.device.emit("unSnap", {...snapEventOut, color: undefined});
+            snapEventIn?.device.emit('unSnap', { ...snapEventIn, color: undefined });
+            snapEventOut.device.emit('unSnap', { ...snapEventOut, color: undefined });
             if (snapEventIn) {
-                this.virtualRoom.emit("unSnapDevices", {
-                    event1: {...snapEventIn, color: undefined},
-                    event2: {...snapEventOut, color: undefined},
+                this.virtualRoom.emit('unSnapDevices', {
+                    event1: { ...snapEventIn, color: undefined },
+                    event2: { ...snapEventOut, color: undefined },
                 });
             }
-        })
+        });
     }
 }
