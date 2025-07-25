@@ -2,13 +2,16 @@ import { VirtualRoom, VirtualRoomEvents } from '../VirtualRoom/VirtualRoom';
 import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
 import CanvasDevice from './CanvasDevice';
 import { GrabPressManager } from './GrabManager';
+import { InfiniteCanvasSnapManager } from './InfiniteCanvasSnapManager';
 import { ViewBoxObject } from './ViewBoxObject';
-import { DeviceInteractionPointerEventOnCanvas } from './types';
+import { DeviceInteractionPointerEventOnCanvas, SnapDevicesCanvasEvent } from './types';
 
 export type InfiniteCanvasEvents = VirtualRoomEvents & { 
 	devicePressOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceMoveOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceReleaseOnCanvas: DeviceInteractionPointerEventOnCanvas;
+	snapDevicesOnCanvas: SnapDevicesCanvasEvent;
+	unSnapDevicesOnCanvas: SnapDevicesCanvasEvent;
 };
 
 /**
@@ -18,23 +21,27 @@ export type InfiniteCanvasEvents = VirtualRoomEvents & {
  * @param sceneObjects - the list of object to add to the scene
  */
 export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvasEvents> extends VirtualRoom<Events> {
-	private grabPressManager: GrabPressManager;
+	override devices: CanvasDevice[] = [];
+	
+	protected override snapManager?: InfiniteCanvasSnapManager;
+	protected grabPressManager?: GrabPressManager;
 
 	private timeInterval: NodeJS.Timeout | undefined;
-
-	override devices: CanvasDevice[] = [];
 
 	constructor(
 		devices: CanvasDevice[] = [],
 		public sceneObjects: ViewBoxObject[] = [],
+		enableSnapManager = true,
+		enablePressManager = true,
 	) {
-		super(devices);
+		super(devices, false);
         this.addEventListener('devicePress', (event) => this.handlePointerTo(event, 'devicePressOnCanvas'));
         this.addEventListener('deviceMove', (event) => this.handlePointerTo(event, 'deviceMoveOnCanvas'), 1);
         this.addEventListener('deviceRelease', (event) => this.handlePointerTo(event, 'deviceReleaseOnCanvas'), 1);
 		this.addEventListener('destroy', this.handleDestroy.bind(this));
 
-		this.grabPressManager = new GrabPressManager(this);
+		if (enableSnapManager) this.snapManager = new InfiniteCanvasSnapManager(this);
+		if (enablePressManager) this.grabPressManager = new GrabPressManager(this);
 
 		this.timeInterval = setInterval(() => {
             this.updateSceneObjects();
@@ -62,6 +69,17 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
     /*                                          handlers                                          */
     /*============================================================================================*/
 
+	
+	/**
+     * Convert a DeviceInteractionPointerEvent to a DeviceInteractionPointerEventOnCanvas
+	 * 
+	 * @param event - The event to convert
+     */
+	public toDeviceInteractionPointerEventOnCanvas(event: DeviceInteractionPointerEvent) {
+		const device = this.devices.find(d => d.id == event.device.id);
+		if (device) return new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y);
+	}
+
 
 	/**
      * Handle a pointer event to dispatch it if on Canvas
@@ -70,10 +88,8 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 	 * @param eventType - The event type to transfert
      */
 	private handlePointerTo(event: DeviceInteractionPointerEvent, eventType: 'devicePressOnCanvas' | 'deviceMoveOnCanvas' | 'deviceReleaseOnCanvas') {
-		const device = this.devices.find(d => d.id == event.device.id);
-		if (device?.pos && device.size) {
-			this.emit(eventType, new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y));
-		}
+		const canvasEvent = this.toDeviceInteractionPointerEventOnCanvas(event);
+		if (canvasEvent) this.emit(eventType, canvasEvent);
 	}
 
 	/**

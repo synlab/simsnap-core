@@ -23,13 +23,14 @@ export type VirtualRoomEvents = {
 export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     readonly id = new Id('virtualRoom');
     private dispatcher = new EventDispatcher<Events>();
-    private snapManager: SnapManager;
+    protected snapManager?: SnapManager;
     
     public devices: Device[] = [];
 
     constructor(
         /** The list of devices currently active on the virtual room */
         devices: Device[] = [],
+        enableSnapManager = true
     ) { 
         devices.forEach(device => this.handleAddDevice(device));
 
@@ -38,8 +39,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
         this.addEventListener('devicePress', this.handleDevicePress.bind(this));
         this.addEventListener('deviceMove', this.handleDeviceMove.bind(this));
         this.addEventListener('deviceRelease', this.handleDeviceRelease.bind(this));
-
-        this.snapManager = new SnapManager(this);
+        if (enableSnapManager) this.snapManager = new SnapManager(this);
     }
 
     /*== Dispatcher deleguate ==*/

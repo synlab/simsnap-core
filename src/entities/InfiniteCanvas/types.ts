@@ -1,4 +1,4 @@
-import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
+import { DeviceInteractionPointerEvent, Position, SnapDevicesEvent, SnapEvent } from '../VirtualRoom/types';
 import CanvasDevice from './CanvasDevice';
 
 /**
@@ -61,4 +61,35 @@ export class DeviceInteractionPointerEventOnCanvas implements DeviceInteractionP
     get posCanvas() {
         return this.canvaX && this.canvaY ? { x: this.canvaX, y: this.canvaY } : undefined;
     }
+}
+
+/**
+ * Represent an Event triggered when two Device snaped or unSnaped on a Infinite Canvas
+ *
+ * @param event1 - the first snaped device event
+ * @param event2 - the second snaped device event
+ * 
+ * @remarks
+ * for snapEvent, the event are the release event - for unSnap, the event are the press event
+ */
+export interface SnapDevicesCanvasEvent extends SnapDevicesEvent {
+    readonly event1: SnapCanvasEvent,
+    readonly event2: SnapCanvasEvent,
+}
+
+/**
+ * Represent an Event triggered on the device when snaped or unSnaped with an other one on a InfinitCanvas
+ *
+ * @param device - The device the current device has been snaped/unSnaped with
+ * @param position - The position of the snap on the current device
+ */
+export class SnapCanvasEvent extends DeviceInteractionPointerEventOnCanvas implements SnapEvent {
+    constructor(
+        device: CanvasDevice,
+        x: number,
+        y: number,
+        readonly snapDevice: CanvasDevice,
+        readonly position: Position,
+        readonly color?: string,
+    ) { super(device, x, y) }
 }
