@@ -13,11 +13,12 @@ export type InfiniteCanvasClientSocketServiceEvents = ClientSocketServiceEvents 
  * need to be initialize with {@link ServerSocketService.InitConnection}
  */
 export class CanvasServerSocketService extends ServerSocketService {
+    protected static override dispatcher: EventDispatcher<InfiniteCanvasClientSocketServiceEvents> = super.dispatcher;
 
     /*== Dispatcher deleguate ==*/
-    static addEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).addEventListener.bind(this.dispatcher);
-    static removeEventListener = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).removeEventListener.bind(this.dispatcher);
-    static emit = (this.dispatcher as EventDispatcher<InfiniteCanvasClientSocketServiceEvents>).emit.bind(this.dispatcher);
+    static addEventListener = this.dispatcher.addEventListener.bind(this.dispatcher);
+    static removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
+    static emit = this.dispatcher.emit.bind(this.dispatcher);
     /*== ==================== ==*/
 
     /**
@@ -26,10 +27,10 @@ export class CanvasServerSocketService extends ServerSocketService {
      */
     protected static override LinkListener(){
         super.LinkListener();
-        this.addEventListener("connect", ()=>{
+        this.addEventListener('connect', () => {
             ServerSocketService.Connection.on('updateScene', (data: ViewBoxObject[]) => {
-                this.emit("sceneUpdate", data)
-            })
+                this.emit('sceneUpdate', data);
+            });
         });
     }
 }

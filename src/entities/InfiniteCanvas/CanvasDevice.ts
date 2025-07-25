@@ -1,6 +1,7 @@
-import { Device, DeviceEvents } from "../VirtualRoom/Device";
-import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from "./types";
-import ViewBoxObject from "./ViewBoxObject";
+import { Device, DeviceEvents } from '../VirtualRoom/Device';
+import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from './types';
+import { ViewBoxManager } from './ViewBoxManager';
+import ViewBoxObject from './ViewBoxObject';
 
 
 export type CanvasDeviceEvents = DeviceEvents & { 
@@ -25,9 +26,97 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
         public pos?: {x: number, y: number},
         size?: {width: number, height: number},
         metaData?: Record<string, any>,
-        preId: string = 'canvaDevice'
+        anchorPriority: number | null = null,
+        preId: string = 'canvaDevice',
     ) {
-        super(size, metaData, preId);
+        super(size, metaData, anchorPriority, preId);
+    }
+
+    /**
+     * Get the center of the viewbox of the entity
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.getCenter}
+     */
+    get center(): { x: number, y: number } | undefined {
+        return ViewBoxManager.getCenter(this);
+    }
+
+    /**
+     * Move the entity to fit the center on the point
+     *
+     * @param point - the point to set the center of the entity on
+     * 
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.setCenter}
+     */
+    set center(point: { x: number, y: number }) {
+        ViewBoxManager.setCenter(point, this);
+    }
+
+    /**
+     * Handle a size change of a device
+     * @override
+     *
+     * @param newSize - The device new size
+     * 
+     */
+    override handleSizeChanged(newSize: { width: number, height: number }){
+        const oldCenter = this.center;
+        super.handleSizeChanged(newSize);
+        if (oldCenter) this.center = oldCenter;
+    }
+        
+
+    /**
+     * Check if a point intersect with the current viewBox
+     * 
+     * @param point - the point to check intersection
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersect}
+     */
+    public isIntersect(point: {x: number, y: number}): boolean {
+        return ViewBoxManager.intersect(point, this);
+    }
+
+    /**
+     * Check if a viewBox intersect the current viewBox
+     * 
+     * @param viewbox - the viewBox to check intersection with
+     *
+     * @remarks
+     * deleguate to ViewBoxManager
+     * @see {@link ViewBoxManager.intersectViewBox}
+     */
+    public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
+        return ViewBoxManager.intersectViewBox(this, viewbox);
+    }
+
+    /**
+     * Return the projection of a ViewBoxObject on the device coordinate
+     * 
+     * @param viewbox - the ViewBoxObject to project
+     */
+    public getProjectedViewBox<VB extends ViewBoxObject>(viewbox: VB): VB {
+        const newViewbox = viewbox.copy();
+        if (newViewbox.pos && this.pos) newViewbox.pos = { x: newViewbox.pos.x - this.pos.x, y: newViewbox.pos.y - this.pos.y };
+        return newViewbox;
+    }
+
+    /**
+     * Custom JSON serialisation for any transfert object
+     * @override
+     *
+     */
+    override toJSON(): object {
+        return {
+            pos: this.pos,
+            ...super.toJSON(),
+        };
     }
 }
 

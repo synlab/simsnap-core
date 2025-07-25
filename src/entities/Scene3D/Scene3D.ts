@@ -1,6 +1,6 @@
-import Device from "../VirtualRoom/Device";
-import { VirtualRoom, VirtualRoomEvents } from "../VirtualRoom/VirtualRoom";
-import Object3D from "./Object3D";
+import Device from '../VirtualRoom/Device';
+import { VirtualRoom, VirtualRoomEvents } from '../VirtualRoom/VirtualRoom';
+import Object3D from './Object3D';
 
 export type Scene3DEvents = VirtualRoomEvents & { sceneUpdate: Object3D[] };
 
@@ -15,14 +15,14 @@ export class Scene3D<Events extends Scene3DEvents = Scene3DEvents> extends Virtu
 
 	constructor(
 		devices: Device[] = [],
-		public sceneObjects: Object3D[] = []
+		public sceneObjects: Object3D[] = [],
 	) { 
-		super(devices)
+		super(devices);
 		this.timeInterval = setInterval(() => {
             this.updateSceneObjects();
-        }, 50)
+        }, 50);
 
-		this.addEventListener('destroy', this.handleDestroy.bind(this))
+		this.addEventListener('destroy', this.handleDestroy.bind(this));
 	}
 	
 	/**

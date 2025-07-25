@@ -1,7 +1,7 @@
-import { Socket } from "socket.io";
-import { Device } from "../../entities/VirtualRoom/Device";
-import { VirtualRoom } from "../../entities/VirtualRoom/VirtualRoom";
-import { EventDispatcher } from "../../entities/VirtualRoom/EventDispatcher";
+import { Socket } from 'socket.io';
+import { Device } from '../../entities/VirtualRoom/Device';
+import { VirtualRoom } from '../../entities/VirtualRoom/VirtualRoom';
+import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 
 export type ClientSocketServiceEvents = {
   destroy: undefined;
@@ -15,43 +15,43 @@ export type ClientSocketServiceEvents = {
  * @param device - the device representative object attribuated to the client
  */
 export class ClientSocketService<Events extends ClientSocketServiceEvents = ClientSocketServiceEvents> {
-    protected dispatcher = new EventDispatcher<Events>();
+    private dispatcher = new EventDispatcher<Events>();
 
     constructor(
         public readonly clientSocket: Socket,
         public virtualRoom: VirtualRoom,
-        public device: Device = new Device()
+        public device: Device = new Device(),
     ) {
-        console.log('✅ New client connected')
+        console.log('✅ New client connected');
         this.virtualRoom.emit('addDevice', this.device);
         
         clientSocket.on('clientSize', (data: {width: number, height: number}) => {
-            this.handleClientSizeChange(data)
-        })
+            this.device.emit('sizeChanged', data);
+        });
 
         clientSocket.on('devicePress', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('devicePress', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('devicePress', { device: this.device, ...data });
+        });
     
         clientSocket.on('deviceMove', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('deviceMove', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('deviceMove', { device: this.device, ...data });
+        });
 
         clientSocket.on('deviceRelease', (data: {x: number, y: number}) => {
-            this.virtualRoom.emit('deviceRelease', {device: this.device, ...data});
-        })
+            this.virtualRoom.emit('deviceRelease', { device: this.device, ...data });
+        });
 
         clientSocket.on('deviceOrientationChange', (data: {alpha: number, beta: number, gamma: number}) => {
-            this.virtualRoom.emit('deviceOrientationChange', {device: this.device, ...data})
-        })
+            this.virtualRoom.emit('deviceOrientationChange', { device: this.device, ...data });
+        });
     
         clientSocket.on('disconnect', () => {
             this.virtualRoom.emit('removeDevice', this.device);
             this.emit('destroy', undefined);
-            console.log('❌ Client disconnected')
-        })
+            console.log('❌ Client disconnected');
+        });
 
-        this.linkListener();
+        this.addEventListener('destroy', this.destroy.bind(this));
     }
 
     /*== Dispatcher deleguate ==*/
@@ -59,24 +59,16 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
     public removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
     public emit = this.dispatcher.emit.bind(this.dispatcher);
     /*== ==================== ==*/
-
-    /**
-     * Link the different listener to the right ws emit message
-     * @virtual
-     */
-    protected linkListener() { }
     
     /*============================================================================================*/
     /*                                          handlers                                          */
     /*============================================================================================*/
 
     /**
-     * Change the size of the current device instance
-     *
-     * @param data - The WebSocketTransmited data
+     * Handle the destroy of the current object
      */
-    private handleClientSizeChange(data: {width: number, height: number}) {
-        this.device.size = data;
+    private destroy() {
+        this.clientSocket.removeAllListeners();
     }
 }
 

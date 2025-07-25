@@ -13,11 +13,12 @@ export type Scene3DClientSocketServiceEvents = ClientSocketServiceEvents & {
  * need to be initialize with {@link ServerSocketService.InitConnection}
  */
 export class Scene3DServerSocketService extends ServerSocketService {
+    protected static override dispatcher: EventDispatcher<Scene3DClientSocketServiceEvents> = super.dispatcher;
     
     /*== Dispatcher deleguate ==*/
-    static addEventListener = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).addEventListener.bind(this.dispatcher);
-    static removeEventListener = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).removeEventListener.bind(this.dispatcher);
-    static emit = (this.dispatcher as EventDispatcher<Scene3DClientSocketServiceEvents>).emit.bind(this.dispatcher);
+    static addEventListener = this.dispatcher.addEventListener.bind(this.dispatcher);
+    static removeEventListener = this.dispatcher.removeEventListener.bind(this.dispatcher);
+    static emit = this.dispatcher.emit.bind(this.dispatcher);
     /*== ==================== ==*/
 
     /**
@@ -26,10 +27,10 @@ export class Scene3DServerSocketService extends ServerSocketService {
      */
     protected static override LinkListener(){
         super.LinkListener();
-        this.addEventListener("connect", ()=>{
+        this.addEventListener('connect', () => {
             ServerSocketService.Connection.on('updateScene', (data: Object3D[]) => {
-                this.emit("sceneUpdate", data)
-            })
+                this.emit('sceneUpdate', data);
+            });
         });
     }
 }

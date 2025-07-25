@@ -1,11 +1,11 @@
-import Device from "./Device";
+import Device from './Device';
 
 /**
  * The snapping position
  *
- * @remarks value is 'center' | 'top' | 'bottom' | 'left' | 'right'
+ * @remarks value is 'top' | 'bottom' | 'left' | 'right'
  */
-export enum Position{ 'center','top','bottom','left','right' }
+export enum Position{ top = 'top', bottom = 'bottom', left = 'left', right = 'right' }
 
 /**
  * class representing an unique identifier of any object (ID)
@@ -28,6 +28,17 @@ export class Id {
 
     toString() {
         return this.value;
+    }
+
+    /**
+     * Factory to create an Id from custom string warning, don't check if unique
+     *
+     * @param value - the string to create Id from
+     */
+    static From(value: string): Id {
+        const id = new Id();
+        (id as { value: string }).value = value;
+        return id;
     }
 }
 
@@ -69,8 +80,8 @@ export interface DeviceInteractionOrientationEvent {
  * for snapEvent, the event are the release event - for unSnap, the event are the press event
  */
 export interface SnapDevicesEvent {
-    readonly event1: DeviceInteractionPointerEvent,
-    readonly event2: DeviceInteractionPointerEvent
+    readonly event1: SnapEvent,
+    readonly event2: SnapEvent,
 }
 
 /**
@@ -79,7 +90,8 @@ export interface SnapDevicesEvent {
  * @param device - The device the current device has been snaped/unSnaped with
  * @param position - The position of the snap on the current device
  */
-export interface SnapEvent {
-    readonly device: Device,
-    readonly position: Position
+export interface SnapEvent extends DeviceInteractionPointerEvent {
+    readonly snapDevice: Device,
+    readonly position: Position,
+    readonly color?: string,
 }
