@@ -1,4 +1,4 @@
-import { EventDispatcher } from '../VirtualRoom/EventDispatcher';
+import { EventDispatcher } from '../Utils';
 import { DeviceInteractionPointerEvent, Id } from '../VirtualRoom/types';
 import { ViewBoxEntity } from './types';
 import { ViewBoxManager } from './ViewBoxManager';

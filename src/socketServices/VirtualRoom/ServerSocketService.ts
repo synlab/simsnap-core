@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
+import { EventDispatcher } from 'src/entities/Utils';
 
 export type ClientSocketServiceEvents = {
     connect: undefined;

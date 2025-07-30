@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { VirtualRoom } from '../../entities/VirtualRoom/VirtualRoom';
-import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 import ClientSocketService from './ClientSocketService';
+import { EventDispatcher } from 'src/entities/Utils';
 
 export type RoomSocketServiceEvents = {
   destroy: undefined;

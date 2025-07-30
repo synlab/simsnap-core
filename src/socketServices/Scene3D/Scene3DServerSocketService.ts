@@ -1,6 +1,6 @@
+import { EventDispatcher } from 'src/entities/Utils';
 import Object3D from '../../entities/Scene3D/Object3D';
 import ServerSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ServerSocketService';
-import { EventDispatcher } from '../../entities/VirtualRoom/EventDispatcher';
 
 export type Scene3DClientSocketServiceEvents = ClientSocketServiceEvents & { 
     sceneUpdate: Object3D[],

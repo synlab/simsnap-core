@@ -1,4 +1,4 @@
-import { EventDispatcher } from './EventDispatcher';
+import { EventDispatcher } from '../Utils';
 import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from './types';
 import { VirtualRoom } from './VirtualRoom';
 

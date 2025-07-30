@@ -1,7 +1,7 @@
 import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, Id, SnapDevicesEvent } from './types';
 import { Device, DeviceEvents } from '../VirtualRoom/Device';
 import { SnapManager } from './SnapManager';
-import { EventDispatcher } from './EventDispatcher';
+import { EventDispatcher } from '../Utils';
 
 export type VirtualRoomEvents = {
   addDevice: Device;
