@@ -1,4 +1,4 @@
-import { EventDispatcher } from 'src/entities/Utils';
+import { EventDispatcher } from '../../entities/Utils';
 import { ViewBoxObject } from '../../entities/InfiniteCanvas/ViewBoxObject';
 import ServerSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ServerSocketService';
 

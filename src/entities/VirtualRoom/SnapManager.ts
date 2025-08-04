@@ -54,12 +54,12 @@ export class SnapManager {
 
     public getPriorityzedAnchoredDevice<E extends DeviceInteractionPointerEvent>(device1: E, device2: E) {
         if (device1.device.anchorPriority === device2.device.anchorPriority) return null;
-        if (device1.device.anchorPriority === null) return { anchored: device2, unAnchored: device1 }
-        if (device2.device.anchorPriority === null) return { anchored: device1, unAnchored: device2 }
+        if (device1.device.anchorPriority === null) return { anchored: device2, unAnchored: device1 };
+        if (device2.device.anchorPriority === null) return { anchored: device1, unAnchored: device2 };
         return (device1.device.anchorPriority > device2.device.anchorPriority ?
             { anchored: device1, unAnchored: device2 } :
             { anchored: device2, unAnchored: device1 }
-        )
+        );
     }
     
     protected positionOnViewPort(event: DeviceInteractionPointerEvent): Position | null {
@@ -70,8 +70,8 @@ export class SnapManager {
             top: event.y < event.device.size.height * margin,
             left: event.x < event.device.size.width * margin,
             bottom: event.y > event.device.size.height * (1 - margin),
-            right: event.x > event.device.size.width * (1 - margin)
-        }
+            right: event.x > event.device.size.width * (1 - margin),
+        };
 
         if (!is.top && !is.bottom) {
             if (is.left) return Position.left;
@@ -84,9 +84,10 @@ export class SnapManager {
         return null;
     };
     
-    protected fireEvent(eventType: 'snap' | 'unSnap', event1: DeviceInteractionPointerEvent & { position: Position }, event2: DeviceInteractionPointerEvent & { position: Position }, color?: string){
-        const snapEvent1: SnapEvent = { ...event1, snapDevice: event2.device, color };
-        const snapEvent2: SnapEvent = { ...event2, snapDevice: event1.device, color };
+    protected fireEvent(eventType: 'snap' | 'unSnap', event1: DeviceInteractionPointerEvent & { position: Position }, event2: DeviceInteractionPointerEvent & { position: Position }, autoFired: boolean = false){
+        const color = eventType === 'snap' ? this.color : undefined;
+        const snapEvent1: SnapEvent = { ...event1, snapDevice: event2.device, color, autoFired };
+        const snapEvent2: SnapEvent = { ...event2, snapDevice: event1.device, color, autoFired };
         snapEvent1.device.emit(eventType, snapEvent1);
         snapEvent2.device.emit(eventType, snapEvent2);
         this.virtualRoom.emit(`${eventType}Devices`, { event1: snapEvent1, event2: snapEvent2 });
@@ -95,13 +96,13 @@ export class SnapManager {
     protected checkSnapDevices(eventEnd1: DeviceInteractionPointerEvent, eventEnd2: DeviceInteractionPointerEvent) {
         const pos1 = this.positionOnViewPort(eventEnd1);
         const pos2 = this.positionOnViewPort(eventEnd2);
-        if (pos1 && pos2) this.fireEvent('snap', { ...eventEnd1, position: pos1 }, { ...eventEnd2, position: pos2 }, this.color)
+        if (pos1 && pos2) this.fireEvent('snap', { ...eventEnd1, position: pos1 }, { ...eventEnd2, position: pos2 });
     }
 
     protected checkUnsnapDevices(eventStart1: DeviceInteractionPointerEvent, eventStart2: DeviceInteractionPointerEvent) {
         const pos1 = this.positionOnViewPort(eventStart1);
         const pos2 = this.positionOnViewPort(eventStart2);
-        if (pos1 && pos2) this.fireEvent('unSnap', { ...eventStart1, position: pos1 }, { ...eventStart2, position: pos2 })
+        if (pos1 && pos2) this.fireEvent('unSnap', { ...eventStart1, position: pos1 }, { ...eventStart2, position: pos2 });
 
         const unAnchored = this.getPriorityzedAnchoredDevice(eventStart1, eventStart2)?.unAnchored;
         if (unAnchored) unAnchored.device.anchorPriority = null;
@@ -110,8 +111,9 @@ export class SnapManager {
     protected unSnapAllConnectedDevice(device: Device) {
         device.snapDevices.forEach((snapEventOut) => {
             snapEventOut.snapDevice.snapDevices.forEach(snapEventIn => {
-                if (snapEventIn.snapDevice.id.value == snapEventOut.device.id.value) this.fireEvent('unSnap', snapEventIn, snapEventOut)
+                if (snapEventIn.snapDevice.id.value == snapEventOut.device.id.value) this.fireEvent('unSnap', snapEventIn, snapEventOut, true);
             });
         });
+
     }
 }

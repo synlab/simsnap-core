@@ -71,6 +71,19 @@ export interface DeviceInteractionOrientationEvent {
 }
 
 /**
+ * Represent an Event triggered on the device when snaped or unSnaped with an other one
+ *
+ * @param device - The device the current device has been snaped/unSnaped with
+ * @param position - The position of the snap on the current device
+ */
+export interface SnapEvent extends DeviceInteractionPointerEvent {
+    readonly snapDevice: Device,
+    readonly position: Position,
+    readonly color?: string,
+    readonly autoFired: boolean;
+}
+
+/**
  * Represent an Event triggered when two Device snaped or unSnaped
  *
  * @param event1 - the first snaped device event
@@ -82,16 +95,4 @@ export interface DeviceInteractionOrientationEvent {
 export interface SnapDevicesEvent {
     readonly event1: SnapEvent,
     readonly event2: SnapEvent,
-}
-
-/**
- * Represent an Event triggered on the device when snaped or unSnaped with an other one
- *
- * @param device - The device the current device has been snaped/unSnaped with
- * @param position - The position of the snap on the current device
- */
-export interface SnapEvent extends DeviceInteractionPointerEvent {
-    readonly snapDevice: Device,
-    readonly position: Position,
-    readonly color?: string,
 }

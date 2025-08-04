@@ -16,6 +16,7 @@ export class Object3D {
         public pos: {x: number, y: number, z: number},
         public rotation: {x: number, y: number, z: number},
         public scale: {x: number, y: number, z: number},
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         public metaData?: Record<string, any>,
         preId: string = 'Object3D')
     {

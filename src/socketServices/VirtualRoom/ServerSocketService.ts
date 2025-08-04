@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client';
-import { EventDispatcher } from 'src/entities/Utils';
+import { EventDispatcher } from '../../entities/Utils';
 
 export type ClientSocketServiceEvents = {
     connect: undefined;

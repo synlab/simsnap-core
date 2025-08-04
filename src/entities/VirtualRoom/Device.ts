@@ -1,6 +1,7 @@
 import { EventDispatcher } from '../Utils';
-import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from './types';
+import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from './types'; 
 import { VirtualRoom } from './VirtualRoom';
+void ({} as VirtualRoom); // avoid lint unused error
 
 export type DeviceEvents = {
     pointerPress: DeviceInteractionPointerEvent;
@@ -34,6 +35,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
 
     constructor(
         public size?: { width: number; height: number; },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         public metaData?: Record<string, any>,
         public anchorPriority: number | null = null,
         preId: string = 'device',
@@ -125,7 +127,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      * @remarks
      * This method should be call by {@link VirtualRoom.handleDeviceRelease}
      */
-    private handleRelease(event: DeviceInteractionPointerEvent){
+    private handleRelease(){
         this.currentPressStart = null;
         this.currentPress = null;
     }

@@ -1,18 +1,19 @@
 import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, Id, SnapDevicesEvent } from './types';
 import { Device, DeviceEvents } from '../VirtualRoom/Device';
+void ({} as DeviceEvents); // avoid lint unused error
 import { SnapManager } from './SnapManager';
 import { EventDispatcher } from '../Utils';
 
 export type VirtualRoomEvents = {
-  addDevice: Device;
-  removeDevice: Device;
-  devicePress: DeviceInteractionPointerEvent;
-  deviceMove: DeviceInteractionPointerEvent;
-  deviceRelease: DeviceInteractionPointerEvent;
-  deviceOrientationChange: DeviceInteractionOrientationEvent;
-  snapDevices: SnapDevicesEvent;
-  unSnapDevices: SnapDevicesEvent;
-  destroy: undefined
+    addDevice: Device;
+    removeDevice: Device;
+    devicePress: DeviceInteractionPointerEvent;
+    deviceMove: DeviceInteractionPointerEvent;
+    deviceRelease: DeviceInteractionPointerEvent;
+    deviceOrientationChange: DeviceInteractionOrientationEvent;
+    snapDevices: SnapDevicesEvent;
+    unSnapDevices: SnapDevicesEvent;
+    destroy: undefined
 };
 
 /**
@@ -30,7 +31,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     constructor(
         /** The list of devices currently active on the virtual room */
         devices: Device[] = [],
-        enableSnapManager = true
+        enableSnapManager = true,
     ) { 
         devices.forEach(device => this.handleAddDevice(device));
 

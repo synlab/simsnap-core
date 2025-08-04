@@ -64,18 +64,19 @@ export class ViewBoxManager{
      *
      * @param a - the first viewbox
      * @param b - the second viewbox
+     * @param margin - the optional positiv or negativ margin to apply on the viewBoxs
      */
-    static intersectViewBox(a: ViewBoxEntity, b: ViewBoxEntity): boolean {
+    static intersectViewBox(a: ViewBoxEntity, b: ViewBoxEntity, margin: number = 0): boolean {
         if (!(a.pos && a.size && b.pos && b.size)) return false;
 
-        const aLeft = a.pos.x;
-        const aRight = a.pos.x + a.size.width;
-        const aTop = a.pos.y;
-        const aBottom = a.pos.y + a.size.height;
-        const bLeft = b.pos.x;
-        const bRight = b.pos.x + b.size.width;
-        const bTop = b.pos.y;
-        const bBottom = b.pos.y + b.size.height;
+        const aLeft = a.pos.x - margin;
+        const aRight = a.pos.x + a.size.width + margin;
+        const aTop = a.pos.y - margin;
+        const aBottom = a.pos.y + a.size.height + margin;
+        const bLeft = b.pos.x - margin;
+        const bRight = b.pos.x + b.size.width + margin;
+        const bTop = b.pos.y - margin;
+        const bBottom = b.pos.y + b.size.height + margin;
 
         return (
             aLeft < bRight &&

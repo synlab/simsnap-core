@@ -27,6 +27,7 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
     constructor(
         public pos?: {x: number, y: number},
         public size?: {width: number, height: number},
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         public metaData?: Record<string, any>,
         preId: string = 'viewBoxObject',
         center?: {x: number, y: number},
@@ -77,13 +78,14 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
      * Check if a viewBox intersect the current viewBox
      * 
      * @param viewbox - the viewBox to check intersection with
+     * @param margin - the optional positiv or negativ margin to apply on the viewBoxs
      *
      * @remarks
      * deleguate to ViewBoxManager
      * @see {@link ViewBoxManager.intersectViewBox}
      */
-    public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
-        return ViewBoxManager.intersectViewBox(this, viewbox);
+    public isIntersectViewBox(viewbox: ViewBoxEntity, margin: number = 0): boolean {
+        return ViewBoxManager.intersectViewBox(this, viewbox, margin);
     }
 
     /*== Dispatcher deleguate ==*/

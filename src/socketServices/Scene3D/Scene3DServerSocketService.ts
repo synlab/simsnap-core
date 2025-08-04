@@ -1,4 +1,4 @@
-import { EventDispatcher } from 'src/entities/Utils';
+import { EventDispatcher } from '../../entities/Utils';
 import Object3D from '../../entities/Scene3D/Object3D';
 import ServerSocketService, { ClientSocketServiceEvents } from '../VirtualRoom/ServerSocketService';
 

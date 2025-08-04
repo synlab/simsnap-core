@@ -91,5 +91,6 @@ export class SnapCanvasEvent extends DeviceInteractionPointerEventOnCanvas imple
         readonly snapDevice: CanvasDevice,
         readonly position: Position,
         readonly color?: string,
-    ) { super(device, x, y) }
+        readonly autoFired: boolean = false,
+    ) { super(device, x, y); }
 }

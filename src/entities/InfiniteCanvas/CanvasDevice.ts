@@ -25,6 +25,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
     constructor(
         public pos?: {x: number, y: number},
         size?: {width: number, height: number},
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         metaData?: Record<string, any>,
         anchorPriority: number | null = null,
         preId: string = 'canvaDevice',
@@ -87,13 +88,14 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
      * Check if a viewBox intersect the current viewBox
      * 
      * @param viewbox - the viewBox to check intersection with
+     * @param margin - the optional positiv or negativ margin to apply on the viewBoxs
      *
      * @remarks
      * deleguate to ViewBoxManager
      * @see {@link ViewBoxManager.intersectViewBox}
      */
-    public isIntersectViewBox(viewbox: ViewBoxEntity): boolean {
-        return ViewBoxManager.intersectViewBox(this, viewbox);
+    public isIntersectViewBox(viewbox: ViewBoxEntity, margin: number = 0): boolean {
+        return ViewBoxManager.intersectViewBox(this, viewbox, margin);
     }
 
     /**
