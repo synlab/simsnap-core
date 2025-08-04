@@ -1,12 +1,10 @@
 import { EventDispatcher } from '../Utils';
-import { DeviceInteractionPointerEvent, Id } from '../VirtualRoom/types';
+import { Id } from '../Utils';
+import { GrabManagerEvent } from './GrabPressManager';
 import { ViewBoxEntity } from './types';
 import { ViewBoxManager } from './ViewBoxManager';
 
-export type ViewBoxObjectEvents = { 
-    click: DeviceInteractionPointerEvent,
-    grab: DeviceInteractionPointerEvent
-};
+export type ViewBoxObjectEvents = {} & GrabManagerEvent;
 
 /**
  * Representation of a Object with a viewbox in a Canvas context

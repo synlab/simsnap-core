@@ -1,18 +1,16 @@
 import { VirtualRoom, VirtualRoomEvents } from '../VirtualRoom/VirtualRoom';
 import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
 import CanvasDevice from './CanvasDevice';
-import { GrabPressManager } from './GrabManager';
-import { InfiniteCanvasSnapManager } from './InfiniteCanvasSnapManager';
+import { GrabPressManager } from './GrabPressManager';
+import { InfiniteCanvasSnapManager, InfiniteCanvasSnapManagerEvent } from './InfiniteCanvasSnapManager';
 import { ViewBoxObject } from './ViewBoxObject';
-import { DeviceInteractionPointerEventOnCanvas, SnapDevicesCanvasEvent } from './types';
+import { DeviceInteractionPointerEventOnCanvas } from './types';
 
 export type InfiniteCanvasEvents = VirtualRoomEvents & { 
 	devicePressOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceMoveOnCanvas: DeviceInteractionPointerEventOnCanvas;
 	deviceReleaseOnCanvas: DeviceInteractionPointerEventOnCanvas;
-	snapDevicesOnCanvas: SnapDevicesCanvasEvent;
-	unSnapDevicesOnCanvas: SnapDevicesCanvasEvent;
-};
+} & InfiniteCanvasSnapManagerEvent;
 
 /**
  * Representation of a virtual room in a 3D context
@@ -32,9 +30,10 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 		devices: CanvasDevice[] = [],
 		public sceneObjects: ViewBoxObject[] = [],
 		enableSnapManager = true,
+		enableTiltManager = true,
 		enablePressManager = true,
 	) {
-		super(devices, false);
+		super(devices, false, enableTiltManager);
         this.addEventListener('devicePress', (event) => this.handlePointerTo(event, 'devicePressOnCanvas'));
         this.addEventListener('deviceMove', (event) => this.handlePointerTo(event, 'deviceMoveOnCanvas'), 1);
         this.addEventListener('deviceRelease', (event) => this.handlePointerTo(event, 'deviceReleaseOnCanvas'), 1);

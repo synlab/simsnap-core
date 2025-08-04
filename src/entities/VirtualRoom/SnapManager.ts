@@ -1,7 +1,12 @@
 import { distance } from '../Utils';
 import Device from './Device';
-import { Position, DeviceInteractionPointerEvent, SnapEvent } from './types';
+import { Position, DeviceInteractionPointerEvent, SnapEvent, SnapDevicesEvent } from './types';
 import { VirtualRoom } from './VirtualRoom';
+
+export type SnapManagerEvent = {
+    snapDevices: SnapDevicesEvent;
+    unSnapDevices: SnapDevicesEvent;
+}
 
 /**
  * Handle the snapping management for virtualRoom

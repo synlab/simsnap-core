@@ -2,6 +2,12 @@ import InfiniteCanvas from './InfiniteCanvas';
 import { DeviceInteractionPointerEventOnCanvas } from './types';
 import { distance } from '../Utils';
 import ViewBoxObject from './ViewBoxObject';
+import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
+
+export type GrabManagerEvent = { 
+    click: DeviceInteractionPointerEvent,
+    grab: DeviceInteractionPointerEvent
+};
 
 /**
  * Handle the grap and press obejct management for infiniteCanvas

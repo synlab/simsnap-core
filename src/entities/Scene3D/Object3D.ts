@@ -1,4 +1,4 @@
-import { Id } from '../VirtualRoom/types';
+import { Id } from '../Utils';
 
 /**
  * Representation of a 3D obejct in a 3D context

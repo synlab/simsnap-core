@@ -3,6 +3,11 @@ import { DeviceInteractionPointerEvent, Position, SnapDevicesEvent, SnapEvent } 
 import InfiniteCanvas from './InfiniteCanvas';
 import { SnapCanvasEvent, SnapDevicesCanvasEvent } from './types';
 
+export type InfiniteCanvasSnapManagerEvent = { 
+    snapDevicesOnCanvas: SnapDevicesCanvasEvent;
+    unSnapDevicesOnCanvas: SnapDevicesCanvasEvent;
+};
+
 /**
  * Handle the snapping management for virtualRoom
  * @internal

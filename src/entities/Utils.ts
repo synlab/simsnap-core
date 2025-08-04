@@ -36,6 +36,41 @@ export class EventDispatcher<Events extends Record<string, any>> {
     }
 }
 
+/**
+ * class representing an unique identifier of any object (ID)
+ *
+ * @param preId - define a pre string to put before an id object, default to 'untyped'
+ *
+ * @remarks the id pattern is `${preId}-${idNumber: string}`
+ */
+
+export class Id {
+    private static Count = 0;
+    readonly value: string;
+
+    constructor(preId: string = 'untyped') {
+        this.value = `${preId}-${Id.Count++}`;
+    }
+
+    get type() {
+        return this.value.split('-')[0];
+    }
+
+    toString() {
+        return this.value;
+    }
+
+    /**
+     * Factory to create an Id from custom string warning, don't check if unique
+     *
+     * @param value - the string to create Id from
+     */
+    static From(value: string): Id {
+        const id = new Id();
+        (id as { value: string; }).value = value;
+        return id;
+    }
+}
 
 export function distance(a: {x: number, y: number}, b: {x: number, y: number}) {
     return Math.hypot(a.x - b.x , a.y - b.y);

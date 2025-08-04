@@ -1,5 +1,6 @@
 import { EventDispatcher } from '../Utils';
-import { Position, DeviceInteractionPointerEvent, Id, SnapEvent } from './types'; 
+import { Position, DeviceInteractionPointerEvent, SnapEvent } from './types'; 
+import { Id } from '../Utils';
 import { VirtualRoom } from './VirtualRoom';
 void ({} as VirtualRoom); // avoid lint unused error
 

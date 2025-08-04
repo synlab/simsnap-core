@@ -1,8 +1,10 @@
-import { DeviceInteractionOrientationEvent, DeviceInteractionPointerEvent, Id, SnapDevicesEvent } from './types';
+import { DeviceInteractionPointerEvent } from './types';
+import { Id } from '../Utils';
 import { Device, DeviceEvents } from '../VirtualRoom/Device';
 void ({} as DeviceEvents); // avoid lint unused error
-import { SnapManager } from './SnapManager';
+import { SnapManager, SnapManagerEvent } from './SnapManager';
 import { EventDispatcher } from '../Utils';
+import { TiltManager, TiltManagerEvent } from './TiltManager';
 
 export type VirtualRoomEvents = {
     addDevice: Device;
@@ -10,11 +12,8 @@ export type VirtualRoomEvents = {
     devicePress: DeviceInteractionPointerEvent;
     deviceMove: DeviceInteractionPointerEvent;
     deviceRelease: DeviceInteractionPointerEvent;
-    deviceOrientationChange: DeviceInteractionOrientationEvent;
-    snapDevices: SnapDevicesEvent;
-    unSnapDevices: SnapDevicesEvent;
     destroy: undefined
-};
+} & TiltManagerEvent & SnapManagerEvent;
 
 /**
  * Representation of a virtual room
@@ -25,6 +24,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     readonly id = new Id('virtualRoom');
     private dispatcher = new EventDispatcher<Events>();
     protected snapManager?: SnapManager;
+    protected tiltManager?: TiltManager;
     
     public devices: Device[] = [];
 
@@ -32,6 +32,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
         /** The list of devices currently active on the virtual room */
         devices: Device[] = [],
         enableSnapManager = true,
+        enableTiltManager = true,
     ) { 
         devices.forEach(device => this.handleAddDevice(device));
 
@@ -41,6 +42,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
         this.addEventListener('deviceMove', this.handleDeviceMove.bind(this));
         this.addEventListener('deviceRelease', this.handleDeviceRelease.bind(this));
         if (enableSnapManager) this.snapManager = new SnapManager(this);
+        if (enableTiltManager) this.tiltManager = new TiltManager(this);
     }
 
     /*== Dispatcher deleguate ==*/

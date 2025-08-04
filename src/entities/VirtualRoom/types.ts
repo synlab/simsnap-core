@@ -8,41 +8,6 @@ import Device from './Device';
 export enum Position{ top = 'top', bottom = 'bottom', left = 'left', right = 'right' }
 
 /**
- * class representing an unique identifier of any object (ID)
- *
- * @param preId - define a pre string to put before an id object, default to 'untyped'
- * 
- * @remarks the id pattern is `${preId}-${idNumber: string}`
- */
-export class Id {
-    private static Count = 0;
-    readonly value: string;
-
-    constructor(preId: string = 'untyped') {
-        this.value = `${preId}-${Id.Count++}`;
-    }
-
-    get type() {
-        return this.value.split('-')[0];
-    }
-
-    toString() {
-        return this.value;
-    }
-
-    /**
-     * Factory to create an Id from custom string warning, don't check if unique
-     *
-     * @param value - the string to create Id from
-     */
-    static From(value: string): Id {
-        const id = new Id();
-        (id as { value: string }).value = value;
-        return id;
-    }
-}
-
-/**
  * Represent an Event triggered on a pointer event i.e Press | Move | Release
  *
  * @param device - the Device responsible of the event
@@ -65,6 +30,19 @@ export interface DeviceInteractionPointerEvent {
  */
 export interface DeviceInteractionOrientationEvent {
     readonly device: Device,
+    readonly alpha: number,
+    readonly beta: number,
+    readonly gamma: number
+}
+
+/**
+ * Represent an Event triggered when all the tilt in approximately the same direction 
+ *
+ * @param alpha
+ * @param beta
+ * @param gamma
+ */
+export interface TiltTogether {
     readonly alpha: number,
     readonly beta: number,
     readonly gamma: number
