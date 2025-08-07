@@ -11,7 +11,7 @@ export type Scene3DEvents = VirtualRoomEvents & { sceneUpdate: Object3D[] };
  * @param sceneObjects - the list of 3D object to add to the scene
  */
 export class Scene3D<Events extends Scene3DEvents = Scene3DEvents> extends VirtualRoom<Events> {
-	private timeInterval: NodeJS.Timeout | undefined;
+	private timeInterval: NodeJS.Timeout;
 
 	constructor(
 		devices: Device[] = [],

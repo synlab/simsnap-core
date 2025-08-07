@@ -42,7 +42,7 @@ export interface DeviceInteractionOrientationEvent {
  * @param beta
  * @param gamma
  */
-export interface TiltTogether {
+export interface TiltTogetherEvent {
     readonly alpha: number,
     readonly beta: number,
     readonly gamma: number
@@ -53,6 +53,8 @@ export interface TiltTogether {
  *
  * @param device - The device the current device has been snaped/unSnaped with
  * @param position - The position of the snap on the current device
+ * @param color - The color attribuated to the Snap
+ * @param autoFired - The boolean indicating if the snap is reulsting from a user operation or the system
  */
 export interface SnapEvent extends DeviceInteractionPointerEvent {
     readonly snapDevice: Device,

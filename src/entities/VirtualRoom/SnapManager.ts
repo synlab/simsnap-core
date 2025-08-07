@@ -8,6 +8,11 @@ export type SnapManagerEvent = {
     unSnapDevices: SnapDevicesEvent;
 }
 
+export type SnapManagerDeviceEvent = {
+    snap: SnapEvent;
+    unSnap: SnapEvent;
+}
+
 /**
  * Handle the snapping management for virtualRoom
  * @internal
@@ -28,6 +33,22 @@ export class SnapManager {
         return this.colorsList[Math.floor(this.colorCount)];
     }
 
+    /**
+     * Return the anchored and unAnchored event regarding of the device's anchor
+     *
+     * @param device1 - the device 1 event
+     * @param device2 - the device 2 event
+     */
+    public getPriorityzedAnchoredDevice<E extends DeviceInteractionPointerEvent>(device1: E, device2: E) {
+        if (device1.device.anchorPriority === device2.device.anchorPriority) return null;
+        if (device1.device.anchorPriority === null) return { anchored: device2, unAnchored: device1 };
+        if (device2.device.anchorPriority === null) return { anchored: device1, unAnchored: device2 };
+        return (device1.device.anchorPriority > device2.device.anchorPriority ?
+            { anchored: device1, unAnchored: device2 } :
+            { anchored: device2, unAnchored: device1 }
+        );
+    }
+
     /** save the starting and ending event of the first touch if a multiple touch across the device is detected */
     private composedPress: { start: DeviceInteractionPointerEvent | null, end: DeviceInteractionPointerEvent | null } = { start: null, end: null };
 
@@ -36,7 +57,7 @@ export class SnapManager {
      *
      * @param event - the released event
      */
-    public manageSnap(event: DeviceInteractionPointerEvent) {
+    protected manageSnap(event: DeviceInteractionPointerEvent) {
         if (this.composedPress.start && this.composedPress.end && event.device.currentPressStart && distance(this.composedPress.start, this.composedPress.end) > 50 && distance(event.device.currentPressStart, event) > 50) {
         // if we already had a touch on the screen, and the distance bewteen start and end for the two touches are big enough
             
@@ -55,16 +76,6 @@ export class SnapManager {
             this.composedPress.start = null;
             this.composedPress.end = null;
         }
-    }
-
-    public getPriorityzedAnchoredDevice<E extends DeviceInteractionPointerEvent>(device1: E, device2: E) {
-        if (device1.device.anchorPriority === device2.device.anchorPriority) return null;
-        if (device1.device.anchorPriority === null) return { anchored: device2, unAnchored: device1 };
-        if (device2.device.anchorPriority === null) return { anchored: device1, unAnchored: device2 };
-        return (device1.device.anchorPriority > device2.device.anchorPriority ?
-            { anchored: device1, unAnchored: device2 } :
-            { anchored: device2, unAnchored: device1 }
-        );
     }
     
     protected positionOnViewPort(event: DeviceInteractionPointerEvent): Position | null {

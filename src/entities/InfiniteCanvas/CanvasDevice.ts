@@ -18,9 +18,9 @@ export type CanvasDeviceEvents = DeviceEvents & {
  */
 export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents> extends Device<Events> implements ViewBoxEntity {
     /** The press event of the current active pointer event, initialized directly on press */
-    override currentPressStart: DeviceInteractionPointerEventOnCanvas | null = null;
+    public override currentPressStart: DeviceInteractionPointerEventOnCanvas | null = null;
     /** The press/move event of the current pointer event, initialized directly on press and updated on move */
-    override currentPress: DeviceInteractionPointerEventOnCanvas | null = null;
+    public override currentPress: DeviceInteractionPointerEventOnCanvas | null = null;
 
     constructor(
         public pos?: {x: number, y: number},
@@ -64,7 +64,7 @@ export class CanvasDevice<Events extends CanvasDeviceEvents = CanvasDeviceEvents
      * @param newSize - The device new size
      * 
      */
-    override handleSizeChanged(newSize: { width: number, height: number }){
+    protected override handleSizeChanged(newSize: { width: number, height: number }){
         const oldCenter = this.center;
         super.handleSizeChanged(newSize);
         if (oldCenter) this.center = oldCenter;

@@ -24,7 +24,7 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 	protected override snapManager?: InfiniteCanvasSnapManager;
 	protected grabPressManager?: GrabPressManager;
 
-	private timeInterval: NodeJS.Timeout | undefined;
+	private timeInterval: NodeJS.Timeout;
 
 	constructor(
 		devices: CanvasDevice[] = [],
@@ -50,7 +50,7 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 	/**
      * Update the scene, and trigger the {@link InfiniteCanvasEvents.sceneUpdate} event
      */
-	updateSceneObjects() {
+	protected updateSceneObjects() {
 		this.devices.forEach(device => {
 			if (!device.pos || !device.size) {
 				return;
@@ -74,7 +74,7 @@ export class InfiniteCanvas<Events extends InfiniteCanvasEvents = InfiniteCanvas
 	 * 
 	 * @param event - The event to convert
      */
-	public toDeviceInteractionPointerEventOnCanvas(event: DeviceInteractionPointerEvent) {
+	public toDeviceInteractionPointerEventOnCanvas(event: DeviceInteractionPointerEvent): DeviceInteractionPointerEventOnCanvas | undefined {
 		const device = this.devices.find(d => d.id == event.device.id);
 		if (device) return new DeviceInteractionPointerEventOnCanvas(device, event.x, event.y);
 	}

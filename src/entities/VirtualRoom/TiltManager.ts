@@ -1,9 +1,9 @@
-import { DeviceInteractionOrientationEvent, TiltTogether } from './types';
+import { DeviceInteractionOrientationEvent, TiltTogetherEvent } from './types';
 import { VirtualRoom } from './VirtualRoom';
 
 export type TiltManagerEvent = {
     deviceOrientationChange: DeviceInteractionOrientationEvent;
-    tiltTogether: TiltTogether;
+    tiltTogether: TiltTogetherEvent;
 }
 
 /**
@@ -22,7 +22,7 @@ export class TiltManager {
      *
      * @param event - the released event
      */
-    public manageTilt(event: DeviceInteractionOrientationEvent) {
+    protected manageTilt(event: DeviceInteractionOrientationEvent) {
         // TODO manage tilting
         this.virtualRoom.emit('tiltTogether', {
             alpha: 0,

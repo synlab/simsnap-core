@@ -1,7 +1,8 @@
 import { EventDispatcher } from '../Utils';
-import { Position, DeviceInteractionPointerEvent, SnapEvent } from './types'; 
+import { DeviceInteractionPointerEvent, SnapEvent } from './types'; 
 import { Id } from '../Utils';
 import { VirtualRoom } from './VirtualRoom';
+import { SnapManagerDeviceEvent } from './SnapManager';
 void ({} as VirtualRoom); // avoid lint unused error
 
 export type DeviceEvents = {
@@ -9,10 +10,7 @@ export type DeviceEvents = {
     pointerMove: DeviceInteractionPointerEvent;
     pointerRelease: DeviceInteractionPointerEvent;
     sizeChanged: { width: number, height: number };
-    anchorPriorityChanged: number;
-    snap: SnapEvent;
-    unSnap: SnapEvent;
-};
+} & SnapManagerDeviceEvent;
 
 /**
  * Representation of a Device
@@ -22,17 +20,16 @@ export type DeviceEvents = {
  * @param preId - the optional substring to add before the final ID
  */
 export class Device<Events extends DeviceEvents = DeviceEvents> {
-    private dispatcher = new EventDispatcher<Events>();
-    
     readonly id: Id;
-
-    /** The press event of the current active pointer event, initialized directly on press */
-    currentPressStart: DeviceInteractionPointerEvent | null = null;
-    /** The press/move event of the current pointer event, initialized directly on press and updated on move */
-    currentPress: DeviceInteractionPointerEvent | null = null;
+    private dispatcher = new EventDispatcher<Events>();
 
     /** The currents devices that are snap with this */
-    snapDevices: SnapEvent[] = [];
+    public snapDevices: SnapEvent[] = [];
+
+    /** The press event of the current active pointer event, initialized directly on press */
+    public currentPressStart: DeviceInteractionPointerEvent | null = null;
+    /** The press/move event of the current pointer event, initialized directly on press and updated on move */
+    public currentPress: DeviceInteractionPointerEvent | null = null;
 
     constructor(
         public size?: { width: number; height: number; },
@@ -50,7 +47,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.addEventListener('pointerMove', this.handleMove.bind(this));
         this.addEventListener('pointerRelease', this.handleRelease.bind(this));
         this.addEventListener('sizeChanged', this.handleSizeChanged.bind(this));
-        this.addEventListener('anchorPriorityChanged', this.handleAnchorPriorityChanged.bind(this));
         /*== ====================== ==*/
     }
 
@@ -92,7 +88,7 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      *
      * @param snapeEvent - the event to handle
      */
-    private handleUnSnapTo(snapeEvent: { device: Device, position: Position }) {
+    private handleUnSnapTo(snapeEvent: SnapEvent) {
         this.snapDevices = this.snapDevices.filter(event => ! (event.device === snapeEvent.device && event.position === snapeEvent.position));
     }
 
@@ -141,16 +137,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
      */
     protected handleSizeChanged(newSize: { width: number, height: number }){
         this.size = newSize;
-    }
-
-    /**
-     * Handle a anchor priority change of a device
-     *
-     * @param newAnchorPriority - The new acnhor priority
-     * 
-     */
-    protected handleAnchorPriorityChanged(newAnchorPriority: number){
-        this.anchorPriority = newAnchorPriority;
     }
 }
 

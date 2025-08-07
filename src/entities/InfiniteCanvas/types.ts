@@ -50,15 +50,15 @@ export class DeviceInteractionPointerEventOnCanvas implements DeviceInteractionP
         public readonly y: number,
     ) { }
 
-    get canvaX() {
+    get canvaX(): number | undefined {
         return this.device.pos && this.x + this.device.pos.x;
     }
 
-    get canvaY() {
+    get canvaY(): number | undefined {
         return this.device.pos && this.y + this.device.pos.y;
     }
 
-    get posCanvas() {
+    get posCanvas(): { x: number, y: number } | undefined {
         return this.canvaX && this.canvaY ? { x: this.canvaX, y: this.canvaY } : undefined;
     }
 }

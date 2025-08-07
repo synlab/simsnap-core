@@ -1,10 +1,11 @@
 import { EventDispatcher } from '../Utils';
 import { Id } from '../Utils';
-import { GrabManagerEvent } from './GrabPressManager';
-import { ViewBoxEntity } from './types';
+import CanvasDevice from './CanvasDevice';
+import { GrabManagerViewBoxEvent } from './GrabPressManager';
+import { DeviceInteractionPointerEventOnCanvas, ViewBoxEntity } from './types';
 import { ViewBoxManager } from './ViewBoxManager';
 
-export type ViewBoxObjectEvents = {} & GrabManagerEvent;
+export type ViewBoxObjectEvents = {} & GrabManagerViewBoxEvent;
 
 /**
  * Representation of a Object with a viewbox in a Canvas context
@@ -19,8 +20,9 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
 
     readonly id: Id;
 
-    /** The list of the CanvasDevice currently pressing the object */
-    pressedBy: Id[] = [];
+    /** The list of the DeviceInteractionPointerEventOnCanvas currently pressing the object */
+    public pressedBy: Record<CanvasDevice["id"]["value"], DeviceInteractionPointerEventOnCanvas> = {};
+    public grabedBy: Record<CanvasDevice["id"]["value"], DeviceInteractionPointerEventOnCanvas> = {};
 
     constructor(
         public pos?: {x: number, y: number},
@@ -96,12 +98,12 @@ export class ViewBoxObject<Events extends ViewBoxObjectEvents = ViewBoxObjectEve
      * copy the object
      *
      * @remarks
-     * shallow copy on metaData and pressedBy
+     * avoid any looping attribut
      * @remarks
      * the id is copied
      */
     copy(): this {
-        return structuredClone({ ...this, dispatcher: undefined, addEventListener: undefined, removeEventListener: undefined, emit: undefined, pressedBy: undefined });
+        return structuredClone({ ...this, dispatcher: undefined, addEventListener: undefined, removeEventListener: undefined, emit: undefined, pressedBy: undefined, grabedBy: undefined });
     }
 
     /**

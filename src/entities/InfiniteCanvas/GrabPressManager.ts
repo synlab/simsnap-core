@@ -1,12 +1,10 @@
 import InfiniteCanvas from './InfiniteCanvas';
 import { DeviceInteractionPointerEventOnCanvas } from './types';
 import { distance } from '../Utils';
-import ViewBoxObject from './ViewBoxObject';
-import { DeviceInteractionPointerEvent } from '../VirtualRoom/types';
 
-export type GrabManagerEvent = { 
-    click: DeviceInteractionPointerEvent,
-    grab: DeviceInteractionPointerEvent
+export type GrabManagerViewBoxEvent = { 
+    click: DeviceInteractionPointerEventOnCanvas,
+    grab: DeviceInteractionPointerEventOnCanvas
 };
 
 /**
@@ -16,8 +14,6 @@ export type GrabManagerEvent = {
  * @param virtualRoom - the calling virtualRoom
  */
 export class GrabPressManager {
-    private currentGrabObjects: [DeviceInteractionPointerEventOnCanvas, ViewBoxObject][] = [];
-
     constructor( private readonly infiniteCanvas: InfiniteCanvas ) {
         infiniteCanvas.addEventListener('devicePressOnCanvas', this.managePressObject.bind(this));
         infiniteCanvas.addEventListener('deviceMoveOnCanvas', this.manageGrabMoveObject.bind(this));
@@ -29,13 +25,15 @@ export class GrabPressManager {
      *
      * @param event - the released event
      */
-    public managePressObject(event: DeviceInteractionPointerEventOnCanvas) {
+    protected managePressObject(event: DeviceInteractionPointerEventOnCanvas) {
         const canvaPos = event.posCanvas;
-		if (canvaPos) this.infiniteCanvas.sceneObjects.filter(el => el.isIntersect(canvaPos)).forEach(el => el.pressedBy.push(event.device.id));
-        this.currentGrabObjects.forEach(([oldEvent, obj]) => {
-            if (!obj.pressedBy.length && oldEvent.posCanvas && event.posCanvas && distance(oldEvent.posCanvas, event.posCanvas) < 100) {
-                obj.pressedBy.push(event.device.id);
-            }
+		if (canvaPos) this.infiniteCanvas.sceneObjects.forEach(obj => {
+            if (obj.isIntersect(canvaPos)) obj.pressedBy[event.device.id.value] = event;
+            Object.values(obj.grabedBy).forEach(oldGrabEvent=>{ 
+                if (!obj.pressedBy[oldGrabEvent.device.id.value] && oldGrabEvent.posCanvas && event.posCanvas && distance(oldGrabEvent.posCanvas, event.posCanvas) < 100) {
+                    obj.pressedBy[event.device.id.value] = event;
+                }
+            })
         });
     }
 
@@ -44,16 +42,12 @@ export class GrabPressManager {
      *
      * @param event - the released event
      */
-    public manageGrabMoveObject(event: DeviceInteractionPointerEventOnCanvas) {
+    protected manageGrabMoveObject(event: DeviceInteractionPointerEventOnCanvas) {
         this.infiniteCanvas.sceneObjects
-            .filter(obj => obj.pressedBy.includes(event.device.id))
             .forEach(obj => {
-                obj.emit('grab', event);
-                const currentGrabObject = this.currentGrabObjects.find(([e, o]) => e.device.id === event.device.id && o.id === obj.id);
-                if (currentGrabObject) {
-                    currentGrabObject[0] = event;
-                } else {
-                    this.currentGrabObjects.push([event, obj]);
+                if ( obj.pressedBy[event.device.id.value] ) {
+                    obj.pressedBy[event.device.id.value] = event;
+                    obj.grabedBy[event.device.id.value] = event;
                 }
         });
     }
@@ -63,18 +57,16 @@ export class GrabPressManager {
      *
      * @param event - the released event
      */
-    public managePressReleaseObject(event: DeviceInteractionPointerEventOnCanvas) {
-        if (event.device.currentPress) {
-            // click //
-			if (event.posCanvas && event.device.currentPress.posCanvas && distance(event.posCanvas, event.device.currentPress.posCanvas) < 10) {
-				this.infiniteCanvas.sceneObjects.filter(el => el.pressedBy.includes(event.device.id)).forEach(el => el.emit('click', event));
-			}
-            this.infiniteCanvas.sceneObjects.forEach(obj => {
-                obj.pressedBy = obj.pressedBy.filter(id => id !== event.device.id);
+    protected managePressReleaseObject(event: DeviceInteractionPointerEventOnCanvas) {
+        const clickEvent = !!(event.posCanvas && event.device.currentPressStart?.posCanvas && distance(event.posCanvas, event.device.currentPressStart.posCanvas) < 10);
+        this.infiniteCanvas.sceneObjects.forEach(obj => {
+            if (obj.pressedBy[event.device.id.value]){
+                delete obj.pressedBy[event.device.id.value];
                 setTimeout(() => {
-                    this.currentGrabObjects = this.currentGrabObjects.filter(([e, o]) => e.device.id !== event.device.id || o.id !== obj.id);
+                    delete obj.grabedBy[event.device.id.value];
                 }, 1000);
-            });
-		}
+                if (clickEvent) obj.emit('click', event);
+            }
+        })
     }
 }

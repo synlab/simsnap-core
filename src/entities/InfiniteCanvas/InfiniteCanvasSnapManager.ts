@@ -23,12 +23,19 @@ export class InfiniteCanvasSnapManager extends SnapManager {
         virtualRoom.addEventListener('unSnapDevicesOnCanvas', this.handleUnSnapDevicesOnCanvas.bind(this));
     }
 
+    private pairs: [Position, Position][] = [
+        [Position.top, Position.bottom],
+        [Position.bottom, Position.top],
+        [Position.left, Position.right],
+        [Position.right, Position.left],
+    ];
+
     /**
      * Convert a SnapEvent to a SnapCanvasEvent
      * 
      * @param event - The event to convert
      */
-    public toSnapCanvasEvent(event: SnapEvent) {
+    public toSnapCanvasEvent(event: SnapEvent): SnapCanvasEvent | undefined {
         const device = this.virtualRoom.devices.find(d => d.id == event.device.id);
         const snapDevice = this.virtualRoom.devices.find(d => d.id == event.snapDevice.id);
         if (device && snapDevice) return new SnapCanvasEvent(device, event.x, event.y, snapDevice, event.position, event.color, event.autoFired);
@@ -45,13 +52,6 @@ export class InfiniteCanvasSnapManager extends SnapManager {
 		const event2 = this.toSnapCanvasEvent(event.event2);
 		if (event1 && event2) this.virtualRoom.emit(eventType, { event1, event2 });
 	}
-
-    private pairs: [Position, Position][] = [
-        [Position.top, Position.bottom],
-        [Position.bottom, Position.top],
-        [Position.left, Position.right],
-        [Position.right, Position.left],
-    ];
 
     private cleanUnAnchored(event1: DeviceInteractionPointerEvent, event2: DeviceInteractionPointerEvent){
         const unAnchor = this.getPriorityzedAnchoredDevice(event1, event2)?.unAnchored;
@@ -74,7 +74,11 @@ export class InfiniteCanvasSnapManager extends SnapManager {
     protected override checkUnsnapDevices(eventStart1: DeviceInteractionPointerEvent, eventStart2: DeviceInteractionPointerEvent) {
         const pos1 = this.positionOnViewPort(eventStart1);
         const pos2 = this.positionOnViewPort(eventStart2);
-        if (this.pairs.find(([p1, p2]) => p1 === pos1 && p2 === pos2)) {
+        if (
+            this.pairs.find(([p1, p2]) => p1 === pos1 && p2 === pos2)
+            && !eventStart1.device.snapDevices.map(({device})=>device.id.value).includes(eventStart2.device.id.value)
+            && !eventStart2.device.snapDevices.map(({device})=>device.id.value).includes(eventStart1.device.id.value)
+        ) {
             super.checkUnsnapDevices(eventStart1, eventStart2);
             this.cleanUnAnchored(eventStart1, eventStart2);
         };
