@@ -48,6 +48,7 @@ export class GrabPressManager {
                 if ( obj.pressedBy[event.device.id.value] ) {
                     obj.pressedBy[event.device.id.value] = event;
                     obj.grabedBy[event.device.id.value] = event;
+                    obj.emit('grab', event);
                 }
         });
     }

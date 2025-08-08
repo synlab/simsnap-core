@@ -1,16 +1,12 @@
 import { EventDispatcher } from '../Utils';
 import { DeviceInteractionPointerEvent, SnapEvent } from './types'; 
 import { Id } from '../Utils';
-import { VirtualRoom } from './VirtualRoom';
 import { SnapManagerDeviceEvent } from './SnapManager';
-void ({} as VirtualRoom); // avoid lint unused error
+import { PointerManagerDeviceEvent } from './PointerManager';
 
 export type DeviceEvents = {
-    pointerPress: DeviceInteractionPointerEvent;
-    pointerMove: DeviceInteractionPointerEvent;
-    pointerRelease: DeviceInteractionPointerEvent;
     sizeChanged: { width: number, height: number };
-} & SnapManagerDeviceEvent;
+} & PointerManagerDeviceEvent & SnapManagerDeviceEvent;
 
 /**
  * Representation of a Device
@@ -41,11 +37,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.id = new Id(preId);
 
         /*== Link internal handlers ==*/
-        this.addEventListener('snap', this.handleSnapTo.bind(this));
-        this.addEventListener('unSnap', this.handleUnSnapTo.bind(this));
-        this.addEventListener('pointerPress', this.handlePress.bind(this));
-        this.addEventListener('pointerMove', this.handleMove.bind(this));
-        this.addEventListener('pointerRelease', this.handleRelease.bind(this));
         this.addEventListener('sizeChanged', this.handleSizeChanged.bind(this));
         /*== ====================== ==*/
     }
@@ -72,62 +63,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /*============================================================================================*/
     /*                                          handlers                                          */
     /*============================================================================================*/
-
-
-    /**
-     * Snap to the passed device
-     *
-     * @param snapeEvent - the event to handle
-     */
-    private handleSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices.push(snapeEvent);
-    }
-
-    /**
-     * UnSnap the passed device
-     *
-     * @param snapeEvent - the event to handle
-     */
-    private handleUnSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices = this.snapDevices.filter(event => ! (event.device === snapeEvent.device && event.position === snapeEvent.position));
-    }
-
-    /**
-     * Handle a press pointer by a device
-     *
-     * @param event - The pointer event
-     * 
-     * @remarks
-     * This method should be call by {@link VirtualRoom.handleDevicePress}
-     */
-    private handlePress(event: DeviceInteractionPointerEvent){
-        this.currentPressStart = this.currentPress = event;
-    }
-    
-    /**
-     * Handle a move pointer by a device
-     *
-     * @param event - The pointer event
-     * 
-     * @remarks
-     * This method should be call by {@link VirtualRoom.handleDeviceMove}
-     */
-    private handleMove(event: DeviceInteractionPointerEvent) {
-        if (this.currentPress) this.currentPress = event;
-    }
-    
-    /**
-     * Handle a release pointer by a device
-     *
-     * @param event - The pointer event
-     * 
-     * @remarks
-     * This method should be call by {@link VirtualRoom.handleDeviceRelease}
-     */
-    private handleRelease(){
-        this.currentPressStart = null;
-        this.currentPress = null;
-    }
 
     /**
      * Handle a size change of a device

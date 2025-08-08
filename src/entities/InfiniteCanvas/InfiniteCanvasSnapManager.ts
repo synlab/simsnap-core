@@ -55,7 +55,7 @@ export class InfiniteCanvasSnapManager extends SnapManager {
 
     private cleanUnAnchored(event1: DeviceInteractionPointerEvent, event2: DeviceInteractionPointerEvent){
         const unAnchor = this.getPriorityzedAnchoredDevice(event1, event2)?.unAnchored;
-        const unAnchored = unAnchor && this.virtualRoom.toDeviceInteractionPointerEventOnCanvas(unAnchor);
+        const unAnchored = unAnchor && this.virtualRoom.pointerManager?.toDeviceInteractionPointerEventOnCanvas(unAnchor);
         if (unAnchored) {
             this.unSnapAllConnectedDevice(unAnchored.device);
             unAnchored.device.pos = undefined;
