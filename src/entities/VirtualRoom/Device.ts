@@ -37,8 +37,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
         this.id = new Id(preId);
 
         /*== Link internal handlers ==*/
-        this.addEventListener('snap', this.handleSnapTo.bind(this));
-        this.addEventListener('unSnap', this.handleUnSnapTo.bind(this));
         this.addEventListener('sizeChanged', this.handleSizeChanged.bind(this));
         /*== ====================== ==*/
     }
@@ -65,25 +63,6 @@ export class Device<Events extends DeviceEvents = DeviceEvents> {
     /*============================================================================================*/
     /*                                          handlers                                          */
     /*============================================================================================*/
-
-
-    /**
-     * Snap to the passed device
-     *
-     * @param snapeEvent - the event to handle
-     */
-    private handleSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices.push(snapeEvent);
-    }
-
-    /**
-     * UnSnap the passed device
-     *
-     * @param snapeEvent - the event to handle
-     */
-    private handleUnSnapTo(snapeEvent: SnapEvent) {
-        this.snapDevices = this.snapDevices.filter(event => ! (event.device === snapeEvent.device && event.position === snapeEvent.position));
-    }
 
     /**
      * Handle a size change of a device
