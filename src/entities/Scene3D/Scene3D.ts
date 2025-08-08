@@ -28,7 +28,7 @@ export class Scene3D<Events extends Scene3DEvents = Scene3DEvents> extends Virtu
 	/**
      * Update the 3D scene, and trigger the {@link Scene3DEvents.sceneUpdate} event
      */
-	updateSceneObjects() {
+	protected updateSceneObjects() {
 		this.emit('sceneUpdate', this.sceneObjects);
     }
 

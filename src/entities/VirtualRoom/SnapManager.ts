@@ -109,7 +109,7 @@ export class SnapManager {
         const snapEvent2: SnapEvent = { ...event2, snapDevice: event1.device, color, autoFired };
         const newSnapDevices = (event: SnapEvent) => event.color ? [...event.device.snapDevices, event] : event.device.snapDevices.filter(e => ! (e.device === event.device && e.position === event.position))
         snapEvent1.device.snapDevices = newSnapDevices(snapEvent1);
-        snapEvent1.device.snapDevices = newSnapDevices(snapEvent1);
+        snapEvent2.device.snapDevices = newSnapDevices(snapEvent2);
         snapEvent1.device.emit(eventType, snapEvent1);
         snapEvent2.device.emit(eventType, snapEvent2);
         this.virtualRoom.emit(`${eventType}Devices`, { event1: snapEvent1, event2: snapEvent2 });

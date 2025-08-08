@@ -76,8 +76,8 @@ export class InfiniteCanvasSnapManager extends SnapManager {
         const pos2 = this.positionOnViewPort(eventStart2);
         if (
             this.pairs.find(([p1, p2]) => p1 === pos1 && p2 === pos2)
-            && !eventStart1.device.snapDevices.map(({device})=>device.id.value).includes(eventStart2.device.id.value)
-            && !eventStart2.device.snapDevices.map(({device})=>device.id.value).includes(eventStart1.device.id.value)
+            && eventStart1.device.snapDevices.map(({snapDevice})=>snapDevice.id.value).includes(eventStart2.device.id.value)
+            && eventStart2.device.snapDevices.map(({snapDevice})=>snapDevice.id.value).includes(eventStart1.device.id.value)
         ) {
             super.checkUnsnapDevices(eventStart1, eventStart2);
             this.cleanUnAnchored(eventStart1, eventStart2);
