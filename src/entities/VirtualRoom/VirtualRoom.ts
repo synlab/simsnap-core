@@ -1,19 +1,15 @@
-import { DeviceInteractionPointerEvent } from './types';
 import { Id } from '../Utils';
-import { Device, DeviceEvents } from '../VirtualRoom/Device';
-void ({} as DeviceEvents); // avoid lint unused error
+import { Device } from '../VirtualRoom/Device';
 import { SnapManager, SnapManagerEvent } from './SnapManager';
 import { EventDispatcher } from '../Utils';
 import { TiltManager, TiltManagerEvent } from './TiltManager';
+import { PointerManager, PointerManagerEvent } from './PointerManager';
 
 export type VirtualRoomEvents = {
     addDevice: Device;
     removeDevice: Device;
-    devicePress: DeviceInteractionPointerEvent;
-    deviceMove: DeviceInteractionPointerEvent;
-    deviceRelease: DeviceInteractionPointerEvent;
     destroy: undefined
-} & TiltManagerEvent & SnapManagerEvent;
+} & PointerManagerEvent & SnapManagerEvent & TiltManagerEvent;
 
 /**
  * Representation of a virtual room
@@ -23,14 +19,16 @@ export type VirtualRoomEvents = {
 export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     readonly id = new Id('virtualRoom');
     private dispatcher = new EventDispatcher<Events>();
-    protected snapManager?: SnapManager;
-    protected tiltManager?: TiltManager;
+    public pointerManager?: PointerManager;
+    public snapManager?: SnapManager;
+    public tiltManager?: TiltManager;
     
     public devices: Device[] = [];
 
     constructor(
         /** The list of devices currently active on the virtual room */
         devices: Device[] = [],
+        enablePointerManager = true,
         enableSnapManager = true,
         enableTiltManager = true,
     ) { 
@@ -38,9 +36,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
 
         this.addEventListener('addDevice', this.handleAddDevice.bind(this));
         this.addEventListener('removeDevice', this.handleRemoveDevice.bind(this));
-        this.addEventListener('devicePress', this.handleDevicePress.bind(this));
-        this.addEventListener('deviceMove', this.handleDeviceMove.bind(this));
-        this.addEventListener('deviceRelease', this.handleDeviceRelease.bind(this));
+        if (enablePointerManager) this.pointerManager = new PointerManager(this);
         if (enableSnapManager) this.snapManager = new SnapManager(this);
         if (enableTiltManager) this.tiltManager = new TiltManager(this);
     }
@@ -78,37 +74,6 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
      */
     private handleRemoveDevice(device: Device) {
         this.devices = this.devices.filter((el) => el.id !== device.id);
-    }
-
-    /**
-     * Handle a press pointer by a device, and trigger the {@link DeviceEvents.pointerPress} event
-     *
-     * @param event - The event emit from the device
-     */
-    private handleDevicePress(event: DeviceInteractionPointerEvent) {
-        event.device.emit('pointerPress', event);
-    }
-
-    /**
-     * Handle a move pointer by a device, and trigger the {@link DeviceEvents.pointerMove} event
-     *
-     * @param event - The event emit from the device
-     */
-    private handleDeviceMove(event: DeviceInteractionPointerEvent) {
-        if (event.device.currentPress) {
-            event.device.emit('pointerMove', event);
-        }
-    }
-
-    /**
-     * Handle a release pointer by a device, and trigger the {@link DeviceEvents.pointerRelease} event
-     *
-     * @param event - The event emit from the device
-     */
-    private handleDeviceRelease(event: DeviceInteractionPointerEvent) {
-        if (event.device.currentPress) {
-            event.device.emit('pointerRelease', event);
-        }
     }
 }
 
