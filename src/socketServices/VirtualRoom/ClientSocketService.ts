@@ -44,8 +44,40 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
         clientSocket.on('deviceOrientationChange', (data: {alpha: number, beta: number, gamma: number}) => {
             this.virtualRoom.emit('deviceOrientationChange', { device: this.device, ...data });
         });
+
+        // Tilt-related socket listeners
+        clientSocket.on('getCombinedTilt', (method: 'average' | 'max' | 'min') => {
+            if (this.virtualRoom.tiltManager) {
+                const combinedTilt = this.virtualRoom.tiltManager.calculateCombinedTilt(method);
+                clientSocket.emit('combinedTilt', combinedTilt);
+            }
+        });
+
+        clientSocket.on('getDeviceTilt', (deviceId: string) => {
+            if (this.virtualRoom.tiltManager) {
+                const deviceTilt = this.virtualRoom.tiltManager.getDeviceTilt(deviceId);
+                clientSocket.emit('deviceTilt', { deviceId, tiltData: deviceTilt });
+            }
+        });
+
+        // Listen to virtualRoom tilt events and broadcast to all clients
+        this.virtualRoom.addEventListener('deviceTiltUpdate', (data) => {
+            clientSocket.broadcast.emit('deviceTiltUpdate', data);
+        });
+
+        this.virtualRoom.addEventListener('deviceTiltMovement', (data) => {
+            clientSocket.broadcast.emit('deviceTiltMovement', data);
+        });
+
+        this.virtualRoom.addEventListener('tiltTogether', (data) => {
+            clientSocket.broadcast.emit('combinedTilt', data);
+        });
     
         clientSocket.on('disconnect', () => {
+            // Clean up device tilt data when they disconnect
+            if (this.virtualRoom.tiltManager) {
+                this.virtualRoom.tiltManager.clearDeviceTiltData(this.device.id.value);
+            }
             this.virtualRoom.emit('removeDevice', this.device);
             this.emit('destroy', undefined);
             console.log('❌ Client disconnected');

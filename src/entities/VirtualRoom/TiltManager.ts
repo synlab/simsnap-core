@@ -4,6 +4,8 @@ import { VirtualRoom } from './VirtualRoom';
 export type TiltManagerEvent = {
   deviceOrientationChange: DeviceInteractionOrientationEvent;
   tiltTogether: TiltTogetherEvent;
+  deviceTiltUpdate: DeviceInteractionOrientationEvent;
+  deviceTiltMovement: { deviceId: string; direction: string; xShift: number; yShift: number };
 };
 
 /**
@@ -26,10 +28,25 @@ export class TiltManager {
   // Update tilt data and detect up/down direction
   public manageTilt(event: DeviceInteractionOrientationEvent) {
     const deviceId = event.device.id.value;
+    
+    // Calculate movement recommendation before updating angles
+    const movementRecommendation = this.getMovementRecommendation(event);
+    
     this.deviceTiltData.set(deviceId, event);
 
     // Store current angles for next comparison AFTER calculating movement
     this.previousTiltAngles.set(deviceId, { alpha: event.alpha, beta: event.beta, gamma: event.gamma });
+
+    // Emit device tilt update
+    this.virtualRoom.emit('deviceTiltUpdate', event);
+
+    // Emit movement recommendation if available
+    if (movementRecommendation) {
+      this.virtualRoom.emit('deviceTiltMovement', {
+        deviceId,
+        ...movementRecommendation
+      });
+    }
 
     // Calculate and emit average tilt for tilt together
     const combinedTilt = this.calculateCombinedTilt('average');
