@@ -7,7 +7,8 @@ export type ClientSocketServiceEvents = {
     pointerPress: { x: number, y: number };
     pointerMove: { x: number, y: number };
     pointerRelease: { x: number, y: number };
-    orientationChange: { alpha: number, beta: number, gamma: number } 
+    orientationChange: { alpha: number, beta: number, gamma: number };
+    acceleration: { x: number, y: number, z: number};
     destroy: undefined;
 };
 
@@ -67,6 +68,8 @@ export class ServerSocketService {
         ServerSocketService.addEventListener('pointerMove', (event) => this.Connection.emit('deviceMove', event));
         ServerSocketService.addEventListener('pointerRelease', (event) => this.Connection.emit('deviceRelease', event));
         ServerSocketService.addEventListener('orientationChange', (event) => this.Connection.emit('deviceOrientationChange', event));
+        ServerSocketService.addEventListener('acceleration', (event) => this.Connection.emit('deviceAcceleration', event));
+        
         ServerSocketService.addEventListener('destroy', () => {
             this.Connection.removeAllListeners();
             this.Connection.close();

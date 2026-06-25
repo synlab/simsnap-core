@@ -36,6 +36,21 @@ export interface DeviceInteractionOrientationEvent {
 }
 
 /**
+ * Represent an Event triggered when the device accelerometer detects motion
+ *
+ * @param device - the Device responsible of the event
+ * @param x - acceleration on x-axis (m/s²)
+ * @param y - acceleration on y-axis (m/s²)
+ * @param z - acceleration on z-axis (m/s²)
+ */
+export interface DeviceInteractionAccelerometerEvent {
+    readonly device: Device,
+    readonly x: number,
+    readonly y: number,
+    readonly z: number
+}
+
+/**
  * Represent an Event triggered when all the tilt in approximately the same direction 
  *
  * @param alpha

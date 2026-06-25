@@ -3,10 +3,11 @@ import { DeviceInteractionPointerEvent, SnapEvent } from './types';
 import { Id } from '../Utils';
 import { SnapManagerDeviceEvent } from './SnapManager';
 import { PointerManagerDeviceEvent } from './PointerManager';
+import { MovementManagerDeviceShakeEvent } from './MovementManager';
 
 export type DeviceEvents = {
     sizeChanged: { width: number, height: number };
-} & PointerManagerDeviceEvent & SnapManagerDeviceEvent;
+} & PointerManagerDeviceEvent & SnapManagerDeviceEvent & MovementManagerDeviceShakeEvent;
 
 /**
  * Representation of a Device

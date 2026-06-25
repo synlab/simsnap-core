@@ -45,6 +45,10 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
             this.virtualRoom.emit('deviceOrientationChange', { device: this.device, ...data });
         });
 
+        clientSocket.on('deviceAcceleration', (data: {x: number, y: number, z: number, timestamp: number}) => {
+            this.virtualRoom.emit('deviceAcceleration', { device: this.device, ...data });
+        });
+
         // Tilt-related socket listeners
         clientSocket.on('getCombinedTilt', (method: 'average' | 'max' | 'min') => {
             if (this.virtualRoom.tiltManager) {
@@ -60,6 +64,14 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
             }
         });
 
+        // Movement/shake-related socket listeners
+        clientSocket.on('getAccelerationHistory', (deviceId: string) => {
+            if (this.virtualRoom.movementManager) {
+                const history = this.virtualRoom.movementManager.getAccelerationHistory(deviceId);
+                clientSocket.emit('accelerationHistory', { deviceId, history });
+            }
+        });
+
         // Listen to virtualRoom tilt events and broadcast to all clients
         this.virtualRoom.addEventListener('deviceTiltUpdate', (data) => {
             clientSocket.broadcast.emit('deviceTiltUpdate', data);
@@ -72,11 +84,20 @@ export class ClientSocketService<Events extends ClientSocketServiceEvents = Clie
         this.virtualRoom.addEventListener('tiltTogether', (data) => {
             clientSocket.broadcast.emit('combinedTilt', data);
         });
+
+        // Listen to virtualRoom shake events and broadcast to all clients
+        this.virtualRoom.addEventListener('shake', (data) => {
+            clientSocket.broadcast.emit('shake', data);
+        });
     
         clientSocket.on('disconnect', () => {
             // Clean up device tilt data when they disconnect
             if (this.virtualRoom.tiltManager) {
                 this.virtualRoom.tiltManager.clearDeviceTiltData(this.device.id.value);
+            }
+            // Clean up device acceleration history when they disconnect
+            if (this.virtualRoom.movementManager) {
+                this.virtualRoom.movementManager.clearDeviceHistory(this.device.id.value);
             }
             this.virtualRoom.emit('removeDevice', this.device);
             this.emit('destroy', undefined);

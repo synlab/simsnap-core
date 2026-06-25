@@ -3,13 +3,14 @@ import { Device } from '../VirtualRoom/Device';
 import { SnapManager, SnapManagerEvent } from './SnapManager';
 import { EventDispatcher } from '../Utils';
 import { TiltManager, TiltManagerEvent } from './TiltManager';
+import { MovementManager, MovementManagerEvent } from './MovementManager';
 import { PointerManager, PointerManagerEvent } from './PointerManager';
 
 export type VirtualRoomEvents = {
     addDevice: Device;
     removeDevice: Device;
     destroy: undefined
-} & PointerManagerEvent & SnapManagerEvent & TiltManagerEvent;
+} & PointerManagerEvent & SnapManagerEvent & TiltManagerEvent & MovementManagerEvent;
 
 /**
  * Representation of a virtual room
@@ -22,6 +23,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
     public pointerManager?: PointerManager;
     public snapManager?: SnapManager;
     public tiltManager?: TiltManager;
+    public movementManager?: MovementManager;
     
     public devices: Device[] = [];
 
@@ -31,6 +33,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
         enablePointerManager = true,
         enableSnapManager = true,
         enableTiltManager = true,
+        enableMovementManager = true,
     ) { 
         devices.forEach(device => this.handleAddDevice(device));
 
@@ -39,6 +42,7 @@ export class VirtualRoom<Events extends VirtualRoomEvents = VirtualRoomEvents> {
         if (enablePointerManager) this.pointerManager = new PointerManager(this);
         if (enableSnapManager) this.snapManager = new SnapManager(this);
         if (enableTiltManager) this.tiltManager = new TiltManager(this);
+        if (enableMovementManager) this.movementManager = new MovementManager(this);
     }
 
     /*== Dispatcher deleguate ==*/
