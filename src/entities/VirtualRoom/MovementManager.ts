@@ -33,9 +33,12 @@ export type MovementManagerDeviceShakeEvent = {
  * time window. Emits a single shake event after confirming continuous oscillation.
  */
 export class MovementManager {
+  private static readonly DEFAULT_HISTORY_LIMIT = 500; // Maximum number of acceleration samples retained per device
+
   private timeWindow: number = 2000;
   private cooldown: number = 100;
   private minimumShakeMagnitude: number = 15;
+  private historyLimit: number = MovementManager.DEFAULT_HISTORY_LIMIT;
   
   private accelerationHistory: Map<
     string,
@@ -57,16 +60,18 @@ export class MovementManager {
    * @param timeWindow - Time window from first peak to shake emission (default: 2000ms) 
    * @param cooldown - Minimum time between consecutive peaks (default: 100ms)
    * @param minimumShakeMagnitude - Peak detection threshold in m/s² (default: 15)
+   * @param historyLimit - Maximum number of acceleration samples retained per device (default: 200)
    */
   public configure(
     timeWindow?: number,
     cooldown?: number,
     minimumShakeMagnitude?: number,
-    
+    historyLimit?: number,
   ): void {
     if (cooldown !== undefined) this.cooldown = cooldown;
     if (minimumShakeMagnitude !== undefined) this.minimumShakeMagnitude = minimumShakeMagnitude;
     if (timeWindow !== undefined) this.timeWindow = timeWindow;
+    if (historyLimit !== undefined) this.historyLimit = Math.max(1, historyLimit);
   }
 
   /**
@@ -85,6 +90,9 @@ export class MovementManager {
     }
 
     const history = this.accelerationHistory.get(deviceId)!;
+    if (history.length >= this.historyLimit) {
+      history.shift();
+    }
     history.push({ timestamp: timestamp, x: event.x, y: event.y, z: event.z, magnitude });
 
     const isPeak = magnitude > this.minimumShakeMagnitude;
